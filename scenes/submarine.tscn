@@ -1,0 +1,53 @@
+[gd_scene load_steps=8 format=3 uid="uid://csubabyss_sub_001"]
+
+[ext_resource type="Script" path="res://scripts/submarine_controller.gd" id="1_sub_script"]
+[ext_resource type="Script" path="res://scripts/weapons_system.gd" id="2_weapons_script"]
+[ext_resource type="Script" path="res://scripts/defense_system.gd" id="3_defense_script"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hull"]
+radius = 1.5
+height = 8.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_hull"]
+radius = 1.5
+height = 8.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_tower"]
+size = Vector3(1.0, 1.2, 2.0)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_propeller"]
+top_radius = 0.8
+bottom_radius = 0.8
+height = 0.2
+
+[node name="Submarine" type="CharacterBody3D"]
+script = ExtResource("1_sub_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_hull")
+
+[node name="MeshHull" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_hull")
+
+[node name="MeshTower" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0.5)
+mesh = SubResource("BoxMesh_tower")
+
+[node name="MeshPropeller" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 4.1)
+mesh = SubResource("CylinderMesh_propeller")
+
+[node name="WeaponsSystem" type="Node3D" parent="."]
+script = ExtResource("2_weapons_script")
+
+[node name="DefenseSystem" type="Node3D" parent="."]
+script = ExtResource("3_defense_script")
+
+[node name="ChaseCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 5, 12)
+current = true
+
+[node name="PeriscopeCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -0.5)

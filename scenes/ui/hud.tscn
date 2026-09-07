@@ -1,0 +1,356 @@
+[gd_scene load_steps=2 format=3 uid="uid://csubabyss_hud_001"]
+
+[ext_resource type="Script" path="res://scripts/hud_controller.gd" id="1_hud_script"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_hud_script")
+
+[node name="MainContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopBar" type="Panel" parent="MainContainer"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 50.0
+grow_horizontal = 2
+
+[node name="TabContainer" type="HBoxContainer" parent="MainContainer/TopBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="BtnNavigator" type="Button" parent="MainContainer/TopBar/TabContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NAVIGATOR"
+
+[node name="BtnGunner" type="Button" parent="MainContainer/TopBar/TabContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "GUNNER"
+
+[node name="BtnDefense" type="Button" parent="MainContainer/TopBar/TabContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "DEFENSE OFFICER"
+
+[node name="RoleLayers" type="Control" parent="MainContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 55.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NavigatorLayer" type="Control" parent="MainContainer/RoleLayers"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GearContainer" type="VBoxContainer" parent="MainContainer/RoleLayers/NavigatorLayer"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 180.0
+offset_bottom = -20.0
+grow_vertical = 2
+
+[node name="BtnStop" type="Button" parent="MainContainer/RoleLayers/NavigatorLayer/GearContainer"]
+layout_mode = 2
+text = "STOP (0%)"
+
+[node name="BtnSlow" type="Button" parent="MainContainer/RoleLayers/NavigatorLayer/GearContainer"]
+layout_mode = 2
+text = "SLOW (30%)"
+
+[node name="BtnCruise" type="Button" parent="MainContainer/RoleLayers/NavigatorLayer/GearContainer"]
+layout_mode = 2
+text = "CRUISE (65%)"
+
+[node name="BtnFlank" type="Button" parent="MainContainer/RoleLayers/NavigatorLayer/GearContainer"]
+layout_mode = 2
+text = "FLANK (100%)"
+
+[node name="BtnSilent" type="Button" parent="MainContainer/RoleLayers/NavigatorLayer/GearContainer"]
+layout_mode = 2
+text = "SILENT RUNNING"
+
+[node name="DepthSliderContainer" type="Control" parent="MainContainer/RoleLayers/NavigatorLayer"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="DepthSlider" type="VSlider" parent="MainContainer/RoleLayers/NavigatorLayer/DepthSliderContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 50.0
+
+[node name="TelemetryContainer" type="VBoxContainer" parent="MainContainer/RoleLayers/NavigatorLayer"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 20.0
+offset_right = 150.0
+offset_bottom = 120.0
+grow_horizontal = 2
+
+[node name="LblDepth" type="Label" parent="MainContainer/RoleLayers/NavigatorLayer/TelemetryContainer"]
+layout_mode = 2
+text = "DEPTH: 100.0m"
+horizontal_alignment = 1
+
+[node name="LblSpeed" type="Label" parent="MainContainer/RoleLayers/NavigatorLayer/TelemetryContainer"]
+layout_mode = 2
+text = "SPEED: 0.0 kts"
+horizontal_alignment = 1
+
+[node name="LblDecibels" type="Label" parent="MainContainer/RoleLayers/NavigatorLayer/TelemetryContainer"]
+layout_mode = 2
+text = "NOISE: 0.0 dB"
+horizontal_alignment = 1
+
+[node name="GunnerLayer" type="Control" parent="MainContainer/RoleLayers"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ReticleCenter" type="Control" parent="MainContainer/RoleLayers/GunnerLayer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Crosshair" type="Label" parent="MainContainer/RoleLayers/GunnerLayer/ReticleCenter"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "+ [ CROSSHAIR ] +"
+horizontal_alignment = 1
+
+[node name="LeadReticle" type="Control" parent="MainContainer/RoleLayers/GunnerLayer/ReticleCenter"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 30.0
+offset_top = -20.0
+offset_right = 70.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeadIndicator" type="Label" parent="MainContainer/RoleLayers/GunnerLayer/ReticleCenter/LeadReticle"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "( O ) LEAD"
+horizontal_alignment = 1
+
+[node name="WeaponsContainer" type="VBoxContainer" parent="MainContainer/RoleLayers/GunnerLayer"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 220.0
+offset_bottom = -20.0
+grow_vertical = 2
+
+[node name="BtnWeapon1" type="Button" parent="MainContainer/RoleLayers/GunnerLayer/WeaponsContainer"]
+layout_mode = 2
+text = "1. HEAVY TORPEDO"
+
+[node name="BtnWeapon2" type="Button" parent="MainContainer/RoleLayers/GunnerLayer/WeaponsContainer"]
+layout_mode = 2
+text = "2. SUPERCAVITATING ROCKET"
+
+[node name="BtnWeapon3" type="Button" parent="MainContainer/RoleLayers/GunnerLayer/WeaponsContainer"]
+layout_mode = 2
+text = "3. EMP / MINES"
+
+[node name="SkillsContainer" type="HBoxContainer" parent="MainContainer/RoleLayers/GunnerLayer"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -60.0
+offset_right = 200.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="BtnSkill1" type="Button" parent="MainContainer/RoleLayers/GunnerLayer/SkillsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "HULL SLAM"
+
+[node name="BtnSkill2" type="Button" parent="MainContainer/RoleLayers/GunnerLayer/SkillsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SONAR SHOCKWAVE"
+
+[node name="BtnFireTrigger" type="Button" parent="MainContainer/RoleLayers/GunnerLayer"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -120.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "FIRE WEAPON"
+
+[node name="DefenseLayer" type="Control" parent="MainContainer/RoleLayers"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RadarContainer" type="Panel" parent="MainContainer/RoleLayers/DefenseLayer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -180.0
+offset_right = 150.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LblRadarTitle" type="Label" parent="MainContainer/RoleLayers/DefenseLayer/RadarContainer"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 10.0
+offset_bottom = 33.0
+grow_horizontal = 2
+text = "360° TACTICAL RADAR"
+horizontal_alignment = 1
+
+[node name="LblTTI" type="Label" parent="MainContainer/RoleLayers/DefenseLayer/RadarContainer"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "NO INCOMING THREATS"
+horizontal_alignment = 1
+
+[node name="BtnEvasionOrder" type="Button" parent="MainContainer/RoleLayers/DefenseLayer"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -120.0
+offset_top = -50.0
+offset_right = 120.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "TRIGGER EVASION ORDER"
+
+[node name="RepairPanel" type="VBoxContainer" parent="MainContainer/RoleLayers/DefenseLayer"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 240.0
+offset_bottom = -20.0
+grow_vertical = 2
+
+[node name="LblRepairHeader" type="Label" parent="MainContainer/RoleLayers/DefenseLayer/RepairPanel"]
+layout_mode = 2
+text = "DAMAGE CONTROL"
+horizontal_alignment = 1
+
+[node name="BtnBreach" type="Button" parent="MainContainer/RoleLayers/DefenseLayer/RepairPanel"]
+layout_mode = 2
+text = "SEAL HULL BREACH"
+
+[node name="BtnEngine" type="Button" parent="MainContainer/RoleLayers/DefenseLayer/RepairPanel"]
+layout_mode = 2
+text = "CALIBRATE ENGINE"
+
+[node name="BtnBreaker" type="Button" parent="MainContainer/RoleLayers/DefenseLayer/RepairPanel"]
+layout_mode = 2
+text = "RESET BREAKER"
+
+[node name="MinigameProgress" type="ProgressBar" parent="MainContainer/RoleLayers/DefenseLayer/RepairPanel"]
+layout_mode = 2

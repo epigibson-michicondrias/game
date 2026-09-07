@@ -1,0 +1,67 @@
+[gd_scene load_steps=10 format=3 uid="uid://csubabyss_main_001"]
+
+[ext_resource type="PackedScene" path="res://scenes/submarine.tscn" id="1_submarine_scene"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud_scene"]
+[ext_resource type="Script" path="res://scripts/hydrothermal_vent.gd" id="3_vent_script"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ocean"]
+sky_top_color = Color(0.02, 0.08, 0.18, 1)
+sky_horizon_color = Color(0.01, 0.04, 0.1, 1)
+ground_bottom_color = Color(0.005, 0.01, 0.03, 1)
+ground_horizon_color = Color(0.01, 0.04, 0.1, 1)
+
+[sub_resource type="Sky" id="Sky_ocean"]
+sky_material = SubResource("ProceduralSkyMaterial_ocean")
+
+[sub_resource type="Environment" id="Environment_underwater"]
+background_mode = 2
+sky = SubResource("Sky_ocean")
+ambient_light_color = Color(0.05, 0.15, 0.25, 1)
+ambient_light_energy = 0.8
+fog_enabled = true
+fog_light_color = Color(0.02, 0.08, 0.15, 1)
+fog_density = 0.015
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_seabed"]
+size = Vector2(2000, 2000)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_vent"]
+top_radius = 2.0
+bottom_radius = 6.0
+height = 8.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_vent_hazard"]
+radius = 8.0
+height = 20.0
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_underwater")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, -0.75, 0.433013, 0, 100, 0)
+light_color = Color(0.4, 0.7, 0.9, 1)
+light_energy = 0.6
+
+[node name="OceanFloor" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, 0)
+mesh = SubResource("PlaneMesh_seabed")
+
+[node name="HydrothermalVent" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, -46, -40)
+script = ExtResource("3_vent_script")
+
+[node name="VentMesh" type="MeshInstance3D" parent="HydrothermalVent"]
+mesh = SubResource("CylinderMesh_vent")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HydrothermalVent"]
+shape = SubResource("CylinderShape3D_vent_hazard")
+
+[node name="Submarine" parent="." instance=ExtResource("1_submarine_scene")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="HUD" parent="." node_paths=PackedStringArray("sub_controller", "weapons_system", "defense_system") instance=ExtResource("2_hud_scene")]
+sub_controller = NodePath("../Submarine")
+weapons_system = NodePath("../Submarine/WeaponsSystem")
+defense_system = NodePath("../Submarine/DefenseSystem")
