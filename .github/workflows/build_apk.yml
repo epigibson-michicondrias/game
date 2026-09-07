@@ -43,12 +43,21 @@ jobs:
           unzip templates.tpz
           mv templates/* ~/.local/share/godot/export_templates/${GODOT_TEMPLATE_DIR}/
 
+      - name: Configure Godot Editor Settings for Android
+        run: |
+          mkdir -p ~/.config/godot
+          cat << EOF > ~/.config/godot/editor_settings-4.tres
+          [resource]
+          export/android/android_sdk_path = "${ANDROID_HOME}"
+          export/android/java_sdk_path = "${JAVA_HOME}"
+          EOF
+
       - name: Setup Android Keystore and Export Preset
         run: |
-          # Generate debug keystore for Android export if not preset
-          keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android -keystore debug.keystore -storepass android -dname "CN=Android Debug,O=Android,C=US" -validity 9999
+          KEYSTORE_PATH="${{ github.workspace }}/debug.keystore"
+          keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android -keystore "$KEYSTORE_PATH" -storepass android -dname "CN=Android Debug,O=Android,C=US" -validity 9999
 
-          cat << 'EOF' > export_presets.cfg
+          cat << EOF > export_presets.cfg
           [preset.0]
           name="Android Debug"
           platform="Android"
@@ -75,13 +84,17 @@ jobs:
           camera/low_processor_usage_mode_sleep_usec=6900
           architectures/arm64-v8a=true
           architectures/x86_64=true
-          keystore/debug="debug.keystore"
+          keystore/debug="$KEYSTORE_PATH"
           keystore/debug_user="androiddebugkey"
           keystore/debug_password="android"
           package/unique_name="com.subabyss.game"
           package/name="SubAbyss"
           package/signed=true
           EOF
+
+      - name: Import Godot Project Assets
+        run: |
+          godot --headless --editor --quit || true
 
       - name: Export Debug APK
         run: |
