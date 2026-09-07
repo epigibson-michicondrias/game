@@ -198,7 +198,7 @@ func _check_crush_depth() -> void:
 		crush_depth_warning.emit(true)
 		var defense_sys = get_node_or_null("DefenseSystem") as DefenseSystem
 		if defense_sys:
-			defense_sys.apply_damage(10.0 * get_process_delta_time(), self)
+			defense_sys.apply_damage(10.0 * get_physics_process_delta_time(), self)
 	else:
 		crush_depth_warning.emit(false)
 
