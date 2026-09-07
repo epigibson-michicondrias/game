@@ -8,6 +8,7 @@ on:
 
 env:
   GODOT_VERSION: 4.2.1-stable
+  GODOT_TEMPLATE_DIR: 4.2.1.stable
 
 jobs:
   export-apk:
@@ -27,16 +28,20 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install Android Build Tools
+        run: |
+          yes | sdkmanager "build-tools;34.0.0" "platform-tools" "platforms;android-34"
+
       - name: Setup Godot Headless & Export Templates
         run: |
-          mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}
+          mkdir -p ~/.local/share/godot/export_templates/${GODOT_TEMPLATE_DIR}
           curl -L "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip" -o godot.zip
           unzip godot.zip
           sudo mv Godot_v${GODOT_VERSION}_linux.x86_64 /usr/local/bin/godot
 
           curl -L "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz" -o templates.tpz
           unzip templates.tpz
-          mv templates/* ~/.local/share/godot/export_templates/${GODOT_VERSION}/
+          mv templates/* ~/.local/share/godot/export_templates/${GODOT_TEMPLATE_DIR}/
 
       - name: Setup Android Keystore and Export Preset
         run: |
@@ -81,7 +86,11 @@ jobs:
       - name: Export Debug APK
         run: |
           mkdir -p build/android
-          godot --headless --export-debug "Android Debug" build/android/SubAbyss-debug.apk
+          godot --headless --export-debug "Android Debug" build/android/SubAbyss-debug.apk || exit 1
+          if [ ! -f "build/android/SubAbyss-debug.apk" ]; then
+            echo "Error: SubAbyss-debug.apk was not generated!"
+            exit 1
+          fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
