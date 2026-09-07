@@ -1,7 +1,4 @@
-[gd_scene]
-load_steps=2
-format=3
-uid=uid://fake_uid_codex_inventory_screen
+[gd_scene load_steps=2 format=3 uid="uid://fake_uid_codex_inventory_screen"]
 
 [ext_resource type="Texture2D" uid="uid://tex_codex_inventory_screen" path="res://assets/ui/codex_inventory_screen.svg" id="1_codex_inventory_screen"]
 

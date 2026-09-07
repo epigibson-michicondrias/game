@@ -1,7 +1,4 @@
-[gd_scene]
-load_steps=2
-format=3
-uid=uid://fake_uid_mission_rewards_screen
+[gd_scene load_steps=2 format=3 uid="uid://fake_uid_mission_rewards_screen"]
 
 [ext_resource type="Texture2D" uid="uid://tex_mission_rewards_screen" path="res://assets/ui/mission_rewards_screen.svg" id="1_mission_rewards_screen"]
 

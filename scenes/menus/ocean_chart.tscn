@@ -1,7 +1,4 @@
-[gd_scene]
-load_steps=2
-format=3
-uid=uid://fake_uid_ocean_chart
+[gd_scene load_steps=2 format=3 uid="uid://fake_uid_ocean_chart"]
 
 [ext_resource type="Texture2D" uid="uid://tex_ocean_chart" path="res://assets/ui/ocean_chart.svg" id="1_ocean_chart"]
 

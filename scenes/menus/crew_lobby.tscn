@@ -1,7 +1,4 @@
-[gd_scene]
-load_steps=2
-format=3
-uid=uid://fake_uid_crew_lobby_screen
+[gd_scene load_steps=2 format=3 uid="uid://fake_uid_crew_lobby_screen"]
 
 [ext_resource type="Texture2D" uid="uid://tex_crew_lobby_screen" path="res://assets/ui/crew_lobby_screen.svg" id="1_crew_lobby_screen"]
 

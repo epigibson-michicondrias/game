@@ -1,7 +1,4 @@
-[gd_scene]
-load_steps=2
-format=3
-uid=uid://fake_uid_main_menu_screen
+[gd_scene load_steps=2 format=3 uid="uid://fake_uid_main_menu_screen"]
 
 [ext_resource type="Texture2D" uid="uid://tex_main_menu_screen" path="res://assets/ui/main_menu_screen.svg" id="1_main_menu_screen"]
 
