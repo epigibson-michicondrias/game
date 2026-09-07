@@ -1,0 +1,173 @@
+class_name HUDController
+extends CanvasLayer
+
+enum Role { NAVIGATOR, GUNNER, DEFENSE }
+
+@export var sub_controller: SubmarineController
+@export var weapons_system: WeaponsSystem
+@export var defense_system: DefenseSystem
+
+var current_role: Role = Role.NAVIGATOR
+
+# Role Panels
+@onready var navigator_layer: Control = $MainContainer/RoleLayers/NavigatorLayer
+@onready var gunner_layer: Control = $MainContainer/RoleLayers/GunnerLayer
+@onready var defense_layer: Control = $MainContainer/RoleLayers/DefenseLayer
+
+# Role Tabs
+@onready var btn_role_nav: Button = $MainContainer/TopBar/TabContainer/BtnNavigator
+@onready var btn_role_gun: Button = $MainContainer/TopBar/TabContainer/BtnGunner
+@onready var btn_role_def: Button = $MainContainer/TopBar/TabContainer/BtnDefense
+
+# Navigator UI Controls
+@onready var btn_gear_stop: Button = $MainContainer/RoleLayers/NavigatorLayer/GearContainer/BtnStop
+@onready var btn_gear_slow: Button = $MainContainer/RoleLayers/NavigatorLayer/GearContainer/BtnSlow
+@onready var btn_gear_cruise: Button = $MainContainer/RoleLayers/NavigatorLayer/GearContainer/BtnCruise
+@onready var btn_gear_flank: Button = $MainContainer/RoleLayers/NavigatorLayer/GearContainer/BtnFlank
+@onready var btn_gear_silent: Button = $MainContainer/RoleLayers/NavigatorLayer/GearContainer/BtnSilent
+@onready var depth_slider: VSlider = $MainContainer/RoleLayers/NavigatorLayer/DepthSliderContainer/DepthSlider
+@onready var lbl_telemetry_depth: Label = $MainContainer/RoleLayers/NavigatorLayer/TelemetryContainer/LblDepth
+@onready var lbl_telemetry_speed: Label = $MainContainer/RoleLayers/NavigatorLayer/TelemetryContainer/LblSpeed
+@onready var lbl_telemetry_decibels: Label = $MainContainer/RoleLayers/NavigatorLayer/TelemetryContainer/LblDecibels
+
+# Gunner UI Controls
+@onready var btn_weapon_1: Button = $MainContainer/RoleLayers/GunnerLayer/WeaponsContainer/BtnWeapon1
+@onready var btn_weapon_2: Button = $MainContainer/RoleLayers/GunnerLayer/WeaponsContainer/BtnWeapon2
+@onready var btn_weapon_3: Button = $MainContainer/RoleLayers/GunnerLayer/WeaponsContainer/BtnWeapon3
+@onready var btn_skill_1: Button = $MainContainer/RoleLayers/GunnerLayer/SkillsContainer/BtnSkill1
+@onready var btn_skill_2: Button = $MainContainer/RoleLayers/GunnerLayer/SkillsContainer/BtnSkill2
+@onready var btn_fire_trigger: Button = $MainContainer/RoleLayers/GunnerLayer/BtnFireTrigger
+@onready var lead_reticle: Control = $MainContainer/RoleLayers/GunnerLayer/ReticleCenter/LeadReticle
+
+# Defense UI Controls
+@onready var lbl_tti_counter: Label = $MainContainer/RoleLayers/DefenseLayer/RadarContainer/LblTTI
+@onready var btn_evasion_order: Button = $MainContainer/RoleLayers/DefenseLayer/BtnEvasionOrder
+@onready var btn_minigame_breach: Button = $MainContainer/RoleLayers/DefenseLayer/RepairPanel/BtnBreach
+@onready var btn_minigame_engine: Button = $MainContainer/RoleLayers/DefenseLayer/RepairPanel/BtnEngine
+@onready var btn_minigame_breaker: Button = $MainContainer/RoleLayers/DefenseLayer/RepairPanel/BtnBreaker
+@onready var minigame_progress_bar: ProgressBar = $MainContainer/RoleLayers/DefenseLayer/RepairPanel/MinigameProgress
+
+var selected_weapon_slot: int = 0
+
+func _ready() -> void:
+	_connect_ui_signals()
+	_connect_system_signals()
+	_switch_role(Role.NAVIGATOR)
+
+func _connect_ui_signals() -> void:
+	# Role Tab Signals
+	if btn_role_nav: btn_role_nav.pressed.connect(func(): _switch_role(Role.NAVIGATOR))
+	if btn_role_gun: btn_role_gun.pressed.connect(func(): _switch_role(Role.GUNNER))
+	if btn_role_def: btn_role_def.pressed.connect(func(): _switch_role(Role.DEFENSE))
+
+	# Navigator Gear Signals
+	if btn_gear_stop: btn_gear_stop.pressed.connect(func(): _on_gear_button_pressed(SubmarineController.Gear.STOP))
+	if btn_gear_slow: btn_gear_slow.pressed.connect(func(): _on_gear_button_pressed(SubmarineController.Gear.SLOW))
+	if btn_gear_cruise: btn_gear_cruise.pressed.connect(func(): _on_gear_button_pressed(SubmarineController.Gear.CRUISE))
+	if btn_gear_flank: btn_gear_flank.pressed.connect(func(): _on_gear_button_pressed(SubmarineController.Gear.FLANK))
+	if btn_gear_silent: btn_gear_silent.pressed.connect(func(): _on_gear_button_pressed(SubmarineController.Gear.SILENT))
+
+	if depth_slider: depth_slider.value_changed.connect(_on_depth_slider_changed)
+
+	# Gunner Signals
+	if btn_weapon_1: btn_weapon_1.pressed.connect(func(): selected_weapon_slot = 0)
+	if btn_weapon_2: btn_weapon_2.pressed.connect(func(): selected_weapon_slot = 1)
+	if btn_weapon_3: btn_weapon_3.pressed.connect(func(): selected_weapon_slot = 2)
+	if btn_skill_1: btn_skill_1.pressed.connect(func(): if weapons_system: weapons_system.use_hull_ability(0))
+	if btn_skill_2: btn_skill_2.pressed.connect(func(): if weapons_system: weapons_system.use_hull_ability(1))
+	if btn_fire_trigger: btn_fire_trigger.pressed.connect(_on_fire_trigger_pressed)
+
+	# Defense Signals
+	if btn_evasion_order: btn_evasion_order.pressed.connect(_on_evasion_order_pressed)
+	if btn_minigame_breach: btn_minigame_breach.pressed.connect(_on_breach_repair_pressed)
+	if btn_minigame_engine: btn_minigame_engine.pressed.connect(_on_engine_calibration_pressed)
+	if btn_minigame_breaker: btn_minigame_breaker.pressed.connect(_on_circuit_breaker_pressed)
+
+func _connect_system_signals() -> void:
+	if sub_controller:
+		sub_controller.telemetry_updated.connect(_on_telemetry_updated)
+
+	if weapons_system:
+		weapons_system.weapon_cooldown_updated.connect(_on_weapon_cooldown_updated)
+
+	if defense_system:
+		defense_system.incoming_threat_detected.connect(_on_incoming_threat)
+		defense_system.repair_progress_updated.connect(_on_repair_progress)
+
+func _switch_role(role: Role) -> void:
+	current_role = role
+
+	if navigator_layer: navigator_layer.visible = (role == Role.NAVIGATOR)
+	if gunner_layer: gunner_layer.visible = (role == Role.GUNNER)
+	if defense_layer: defense_layer.visible = (role == Role.DEFENSE)
+
+	# Switch Camera perspective on Submarine if applicable
+	if sub_controller:
+		var cam_chase = sub_controller.get_node_or_null("ChaseCamera") as Camera3D
+		var cam_periscope = sub_controller.get_node_or_null("PeriscopeCamera") as Camera3D
+		if cam_chase and cam_periscope:
+			cam_chase.current = (role == Role.NAVIGATOR or role == Role.DEFENSE)
+			cam_periscope.current = (role == Role.GUNNER)
+
+func _on_gear_button_pressed(gear: SubmarineController.Gear) -> void:
+	if sub_controller:
+		sub_controller.set_gear(gear)
+
+func _on_depth_slider_changed(value: float) -> void:
+	if sub_controller:
+		# Map slider value (0-100) to negative heave ballast input
+		sub_controller.input_heave = (value - 50.0) / 50.0
+
+func _on_telemetry_updated(depth: float, speed: float, decibels: float) -> void:
+	if lbl_telemetry_depth: lbl_telemetry_depth.text = "DEPTH: %.1fm" % depth
+	if lbl_telemetry_speed: lbl_telemetry_speed.text = "SPEED: %.1f kts" % speed
+	if lbl_telemetry_decibels: lbl_telemetry_decibels.text = "NOISE: %.1f dB" % decibels
+
+func _on_fire_trigger_pressed() -> void:
+	if weapons_system:
+		weapons_system.fire_weapon(selected_weapon_slot)
+
+func _on_weapon_cooldown_updated(slot_index: int, time_left: float) -> void:
+	var btn: Button = null
+	match slot_index:
+		0: btn = btn_weapon_1
+		1: btn = btn_weapon_2
+		2: btn = btn_weapon_3
+
+	if btn:
+		if time_left > 0.0:
+			btn.text = "SLOT %d (%.1fs)" % [slot_index + 1, time_left]
+			btn.disabled = true
+		else:
+			btn.text = "WEAPON %d" % [slot_index + 1]
+			btn.disabled = false
+
+func _on_incoming_threat(threat_id: String, tti: float) -> void:
+	if lbl_tti_counter:
+		lbl_tti_counter.text = "ALERT: %s | TTI: %.1fs" % [threat_id, tti]
+
+func _on_evasion_order_pressed() -> void:
+	if defense_system:
+		defense_system.issue_evasion_order()
+
+func _on_breach_repair_pressed() -> void:
+	if defense_system:
+		if defense_system.current_minigame != DefenseSystem.MinigameType.HULL_BREACH:
+			defense_system.start_repair_minigame(DefenseSystem.MinigameType.HULL_BREACH)
+		defense_system.process_hull_breach_tap()
+
+func _on_engine_calibration_pressed() -> void:
+	if defense_system:
+		if defense_system.current_minigame != DefenseSystem.MinigameType.ENGINE_CALIBRATION:
+			defense_system.start_repair_minigame(DefenseSystem.MinigameType.ENGINE_CALIBRATION)
+		defense_system.process_engine_calibration_slider(0.75)
+
+func _on_circuit_breaker_pressed() -> void:
+	if defense_system:
+		if defense_system.current_minigame != DefenseSystem.MinigameType.CIRCUIT_BREAKER:
+			defense_system.start_repair_minigame(DefenseSystem.MinigameType.CIRCUIT_BREAKER)
+		defense_system.toggle_circuit_breaker(0)
+
+func _on_repair_progress(system_name: String, progress: float) -> void:
+	if minigame_progress_bar:
+		minigame_progress_bar.value = progress
