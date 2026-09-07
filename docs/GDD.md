@@ -1,147 +1,217 @@
-# SubAbyss - Master Game Design Document (GDD)
+# SubAbyss - Technical Specification & Game Design Document (GDD / PRD)
 
-## Overview
-**SubAbyss** is a mobile-first 3D tactical submarine combat game developed in Godot 4 (GDScript).
-Gameplay combines the heavy vehicular positioning and tactical pacing of *World of Tanks* with the cooperative 3-player crew dynamics and modular progression/crafting of *Warframe*.
-
-**Target Platform:** Android Mobile (Landscape orientation, touch-driven UI, Compatibility/Mobile renderer).
-
----
-
-## 1. Core Loop & Match Structure
-
-### 1.1 Match Architecture
-- **Match Format:** 3v3 Submarine Engagements (6 Submarines total, 18 players per match).
-- **Crew Dynamic:** Each submarine accommodates 3 human players operating distinct, asymmetric roles in real-time.
-- **Match Duration:** 10–12 minute tactical engagements across dynamic abyssal sectors.
-- **Victory Conditions:**
-  - **PvP Arena:** Elimination of enemy subfleet or control of abyssal control points.
-  - **PvE Missions:** Completion of objective (Survival, Mobile Defense, Sabotage, Leviathan Boss) followed by successful extraction.
-
-### 1.2 Asymmetric Crew Roles
-1. **Navigator:** Helm pilot responsible for 6DoF movement, ballast depth control, gear management, and stealth maneuvering.
-2. **Gunner:** Targeting and ballistics expert managing weapon slots, fixed hull abilities, lead prediction reticles, and acoustic transient control.
-3. **Defense Officer:** Electronic warfare and damage control specialist operating 360° radar, Time-To-Impact (TTI) alerts, countermeasure deployment, Emergency Evasion prompts, and repair minigames.
+**Nombre en clave:** Project: SubAbyss (Submarinos 3D)
+**Plataforma objetivo:** Dispositivos móviles (Build inicial: APK Android / Escalable a iOS)
+**Género:** Combate Naval Submarino Táctico 3D / Cooperativo Asimétrico / Extracción y Crafteo
+**Inspiración central:** *World of Tanks* (peso táctico, balística y posicionamiento) + *Warframe* (progresión, farmeo de planos, mods modulares y habilidades fijas de chasis).
 
 ---
 
-## 2. Navigator Specifications
+## 1. Resumen del Concepto y Core Loop
 
-### 2.1 Hydrodynamic Flight Physics (6DoF)
-- **3D Flight Simulation:** Submarines operate with underwater 6DoF dynamics (Yaw turning, Pitch angle, Ballast Heave Z axis elevation, Roll stability).
-- **Drift & Hydrodynamic Inertia:** Linear momentum and water drag resistance prevent instant stopping. Turning at high speeds causes drift and cavitation noise.
-- **Depth & Pressure Mechanics:** Submarines experience water density resistance, ballast buoyancy balance, and depth-based pressure limits.
+### 1.1 Premisa Central
+Juego de combate submarino en 3D en tiempo real donde cada submarino es tripulado por 3 jugadores humanos en roles asimétricos y complementarios:
+- **Navegante:** Movilidad, gobierno, sigilo y marcación táctica.
+- **Artillero:** Balística, selección de munición, cálculo de trayectorias y disparo.
+- **Oficial de Defensa:** Detección perimetral, contramedidas, órdenes evasivas y control de daños mediante minijuegos.
 
-### 2.2 Propulsion Gears & Noise Profiles
-- **STOP (0% Thrust):** Neutral velocity, 0 dB self-generated acoustic noise. Ideal for silent ambushes.
-- **SLOW (30% Thrust):** Silent cruise speed (~10 dB), minimal wake, low energy usage.
-- **CRUISE (65% Thrust):** Standard combat velocity (~45 dB), balanced maneuverability and energy consumption.
-- **FLANK (100% Thrust):** Maximum speed (~90 dB). Causes propeller cavitation, emitting acoustic pings that highlight the submarine on enemy sonar.
-- **SILENT RUNNING:**
-  - Speed locked at 20%.
-  - Emits 0 dB noise across all passive sonar arrays.
-  - Duration limit: 15 seconds max duration.
-  - Cooldown: 30 seconds before re-engagement.
+### 1.2 Dimensionamiento de Partida (PvP)
+- **3 Submarinos vs. 3 Submarinos.**
+- **18 jugadores humanos simultáneos por partida** (3 tripulantes × 6 naves).
 
-### 2.3 Tactical Maneuvers
-- **Crash Dive:** Rapid ballast purge driving the sub downward at max negative pitch to break missile lock or escape surface radar.
-- **Emergency Reverse:** Reverse propulsion pulse to clear tight cavern turns or avoid torpedo lines.
-- **Thermocline Masking:** Hiding below warm/cold ocean thermal boundaries (Thermoclines) to refract active sonar and conceal the sub's acoustic signature.
-
----
-
-## 3. Gunner Specifications
-
-### 3.1 Customization & Slots
-- **3 Custom Weapon Slots:**
-  1. *Heavy Torpedo:* Slow, high-damage homing ordnance with high acoustic signature.
-  2. *Supercavitating Rocket-Torpedo:* Extremely fast, unguided linear projectile designed for short-range interception.
-  3. *EMP / Sub-Sea Mines:* Area-denial hazards that disable electronic systems or trigger proxy detonations.
-- **2 Fixed Hull Abilities:** Chassis-specific special abilities (e.g., Heavy Hull Slam, Railgun Beam, Sonar Shockwave).
-
-### 3.2 Dynamic Targeting & Lead Reticle
-- **Lead Vector Prediction:** Calculates projectile speed, target velocity vector, distance, and water drag to display a stabilized lead prediction reticle on target hulls.
-- **Target Ping Stabilization:** When the Navigator maintains active sonar ping on a target, the Gunner's lead reticle stabilizes, increasing accuracy by 40%.
-
-### 3.3 Acoustic Transient Penalty
-- **Firing Exposure:** Launching heavy torpedoes or rockets creates a loud acoustic transient spike (120+ dB).
-- **Minimap Exposure:** Instantly exposes the submarine's exact location on enemy minimaps for **5 seconds** regardless of current gear or stealth state.
+### 1.3 Core Gameplay Loop
+```
+[Farmeo PvE / Misiones de Extracción]
+               │
+               ▼
+[Astillero: Planos + Aleaciones + Microchips] ──> [Desbloqueo de Nuevos Submarinos y Armas]
+               │
+               ▼
+[Personalización de Loadouts y Módulos]
+               │
+               ▼
+[Combate Competitivo PvP / Jefes Abisales]
+```
 
 ---
 
-## 4. Defense Officer Specifications
+## 2. Sistema de Tripulación: Roles y Mecánicas
 
-### 4.1 Tactical Radar & Threat Tracking
-- **360° Tactical Radar:** Sweeping active/passive display showing incoming torpedoes, mines, enemy signatures, and environmental hazards.
-- **Time-To-Impact (TTI) Counter:** Real-time countdown calculation on locked incoming projectiles, alerting the crew when an impact is imminent (e.g., "TTI: 2.8s").
+### Rol 1: Navegante (Gobierno y Propulsión)
 
-### 4.2 Countermeasure Systems
-- **Noisemaker Decoys:** Deploys acoustic noisemakers that draw lock-on homing torpedoes away from the hull.
-- **Microbubble Screens:** Releases dense thermal bubble clouds that blind enemy optical tracking and disrupt active sonar.
-- **Close-In Hard-Kill:** Short-range interceptor explosive that destroys incoming projectiles within 50 meters.
+#### Física de Navegación 3D (6 Grados de Libertad Hidrodinámicos):
+- **Viraje (Yaw):** Giro sobre eje horizontal asistido por timón.
+- **Inclinación (Pitch):** Ajuste de proa ascendente/descendente para inmersión dinámica.
+- **Cota Vertical Directa (Heave):** Vaciado/llenado de tanques de lastre para ganar o perder profundidad en posición neutra.
+- **Inercia:** El casco no frena en seco; requiere contrarruta o deslizamiento (*drift*) hidrodinámico.
 
-### 4.3 Emergency Evasion Synergy
-- **Reaction Window:** When an incoming torpedo is within critical distance, the Defense Officer can trigger an *Evasion Order*.
-- **Synergy Window:** Activates a 2–3 second reaction window for the Navigator to perform an emergency dodge maneuver.
-- **Damage Mitigation:** Successfully executed evasions mitigate **80% of incoming damage**.
+#### Selector de Velocidades (Gears):
+- **Estático (0%):** Firma acústica base. Flotabilidad neutra.
+- **Lento (30%):** Movimiento silencioso de aproximación táctica.
+- **Medio (65%):** Crucero estándar de combate y exploración.
+- **Rápido / Flanco (100%):** Máxima aceleración. Provoca cavitación de turbinas (delata posición en todo el mapa).
 
-### 4.4 Damage Control Repair Minigames
-- **Hull Breach:** Tap sequence minigame to seal hull cracks and stop water flooding before hull structural integrity collapses.
-- **Engine Calibration:** Slider alignment minigame to clear propeller debris and restore full gear thrust capability.
-- **Circuit Breaker:** Node puzzle minigame to bypass blown fuses and restore power to weapon systems and active radar.
+#### Modo Sigilo (Silent Running):
+- Velocidad reducida fija (20%), ruido de propulsores = 0 dB.
+- **Ventana activa:** 12 a 15 segundos.
+- **Cooldown obligatorio:** 30 segundos tras apagado para enfriar baterías.
 
----
-
-## 5. Dynamic Ocean Arenas ("Levolution")
-
-### 5.1 Destructible Environments
-- **Destructible Coral Reefs:** Firing heavy weapons or colliding with fragile coral structures shatters cover, opening lines of fire.
-- **Narrow Caverns & Abyssal Trenches:** Tight spatial choke points requiring precise navigation, offering natural cover against long-range torpedoes.
-
-### 5.2 Environmental Hazards & Events
-- **Hydrothermal & Volcanic Eruptions:** Erupting vents launch thermal plumes that deal heat damage and scramble sonar targeting.
-- **Thermal Blindness:** Warm water currents blind active thermal optics and mask sub signatures.
-- **Abyssal Currents:** Strong underwater forces that drag submarines off trajectory unless countered by propulsion.
-
-### 5.3 Abyssal Creep Encounters
-- **Abyssal Giant Squid:** Neutral fauna boss that attacks passing subs. Defeating or pacifying the squid grants the **Abyssal Ink** buff (100% stealth & sonar invisibility for 20s).
-- **EMP Eels:** Hostile bio-electric creatures that attach to sub hulls, draining energy and disabling active radar until cleared.
-
-### 5.4 Tactical Crates
-- **Match Spawns:** Maximum 3 supply crates drop randomly in the arena per match.
-- **Crate Types:**
-  - *Health Repair:* Restores 50% hull integrity.
-  - *Cooldown Reset:* Instantly clears all weapon and ability cooldowns.
-  - *Ultimate Charge:* Fills 100% of the chassis hull ability gauge.
+#### Maniobras de Emergencia:
+- **Inmersión de Emergencia (Crash Dive):** Caída violenta de cota (Z) para romper líneas de fijación de torpedos.
+- **Uso de Termoclinas:** Posicionar el casco por encima/debajo de gradientes térmicos para rebotar sonares activos rivales.
 
 ---
 
-## 6. Warframe-Style PvE & Crafting
+### Rol 2: Artillero (Ofensiva y Balística)
 
-### 6.1 Ocean Sector Star Chart
-- **Navigation Map:** Node-based star chart across deep-sea trench sectors (Mariana Trench, Arctic Basin, Hydrothermal Abyss).
-- **Mission Types:**
-  - *Survival:* Endure waves of hostile automated drone subs.
-  - *Mobile Defense:* Escort and protect abyssal research probes while downloading underwater data.
-  - *Sabotage:* Infiltrate enemy underwater oil rigs and detonate power cores.
-  - *Leviathan Boss Fights:* Multi-stage raid battles against gigantesque bio-mechanical abyss monsters.
+#### Estructura del Arsenal (Loadout de Combate):
+- **3 Armas Configurables (Pre-partida):**
+  - *Slot 1 (Principal):* Torpedos acústicos pesados o torpedos perforantes de impacto.
+  - *Slot 2 (Secundario / Rápido):* Torpedos ultrarrápidos de supercavitación o misiles de cápsula boya a superficie.
+  - *Slot 3 (Táctico / Negación de Zona):* Minas magnéticas ancladas, cargas sónicas PEM o cargas de racimo.
+- **2 Habilidades Fijas del Submarino (Inmutables por Chasis):**
+  - Definidas por el modelo del casco (ej. Lanzador de Fantasmas Acústicos, Sobrecarga de Tubos para disparo doble instantáneo).
 
-### 6.2 Shipyard & Foundry Component Crafting
-- **Subframe Crafting:** Crafting new submarine hulls requires collecting blueprint recipes and 4 core components:
-  1. *Hull Sub-Assembly:* Structural plating and depth pressure tolerance.
-  2. *Engine Thruster:* Cavitation suppression and thrust output.
-  3. *Avionics Module:* Sonar range, lead reticle accuracy, and radar sweep speed.
-  4. *Power Core:* Energy capacity, recharge rates, and ability potency.
+#### Mecánicas de Tiro y Balística Marina:
+- **Retícula de Predicción Asistida (Vector Lead):** Calcula el punto futuro de impacto según la velocidad y ángulo del objetivo.
+- **Sinergia con Navegación:** Si el Navegante mantiene al rival fijado con el sonar, la retícula es 100% estable. Si hay pérdida de línea acústica, la retícula tiembla o se oculta.
+- **Torpedos Filoguiados (Teledirigidos):** Control manual del torpedo en trayectoria mediante giroscopio/trackpad móvil.
 
-### 6.3 Microchip (Mod) System
-- **Mod Capacity & Polarities:** Subframes and weapons feature capacity limits and polarity slots (Vazarin, Naramon, Madurai) that halve mod drain when matched.
-- **Elemental Combos:**
-  - *Thermal:* Heat damage causing engine overheat.
-  - *Cryo:* Slows target speed and maneuverability.
-  - *Corrosive (Thermal + EMP):* Strips target hull armor.
-  - *EMP:* Drains power grid and scrambles radar.
+#### Firma Acústica por Disparo (Mecánica de Exposición):
+- Disparar un arma pesada genera un pico masivo de decibelios (100+ dB) que revela la posición exacta del submarino en el mapa enemigo durante **5 segundos**, salvo que se empleen torpedos especiales de gas frío o habilidades de supresión de cavitación.
 
-### 6.4 Abyssal Relic Cracking
-- **Relics:** Earned from PvE missions (Axi, Neo, Meso, Lith equivalent abyssal relics).
-- **Relic Cracking:** Equipped during abyssal deep dives. Collecting Abyssal Traces opens the relic upon extraction.
-- **Team Reward Selection:** Upon extraction, all team members can choose 1 reward from any squad member's cracked relic pool.
+---
+
+### Rol 3: Oficial de Defensa (Detección y Control de Daños)
+
+#### Radar Perimetral 360° e Hidrófonos:
+- Monitoreo de amenazas entrantes en 3D.
+- Cálculo y visualización en tiempo real del **TTI (Time to Impact)** de los torpedos enemigos.
+
+#### Arsenal de Contramedidas Activas:
+- **Noisemakers (Señuelos acústicos):** Desvían torpedos con buscador sónico.
+- **Pantalla de Microburbujas:** Dispersa ondas de sonar y ciega radares enemigos en la zona.
+- **Hard-Kill:** Cargas defensivas de intercepción en rango cercano.
+
+#### Sinergia Cooperativa: Orden Evasiva:
+- Si las contramedidas fallan o están en recarga, el Defensor emite una *Orden Evasiva* contextual.
+- El Navegante recibe una alerta crítica con una ventana de reacción de 2 a 3 segundos.
+- Si el Navegante pulsa la acción a tiempo, el submarino ejecuta una maniobra forzada que desvía el torpedo o reduce el daño en un **80%**.
+
+#### Control de Daños (Minijuegos Táctiles de 3 a 5 Segundos):
+- **Vía de Agua / Inundación:** Tocar puntos de presión para sellar mamparos antes de que el peso hunda el casco a la cota de aplastamiento.
+- **Falla de Turbinas:** Deslizar potenciómetros para estabilizar la frecuencia del reactor.
+- **Tubos Bloqueados:** Puentear conexiones eléctricas mediante unión de circuitos de colores.
+
+---
+
+## 3. Entorno de Batalla y Dinámica de Mapas
+
+### 3.1 Geografía Marina Táctica
+- **Arrecifes de Coral:** Cobertura blanda destructible por proyectiles de alto calibre.
+- **Cuevas y Cavernas Abisales:** Combate cerrado que bloquea fijaciones de largo alcance pero multiplica los rebotes de sonar.
+- **Fosas Abisales:** Zonas de alta presión al borde de la cota de aplastamiento (*Crush Depth*), ideales para emboscadas silenciosas.
+
+### 3.2 Eventos Catastróficos Dinámicos (Levolution)
+El servidor ejecuta eventos aleatorios a mitad de partida que cambian las condiciones:
+- **Erupción de Volcán Submarino:** Inutiliza los sonares térmicos y genera corrientes de agua hirviendo que dañan el casco.
+- **Tsunami / Corrientes Abisales:** Desvían la trayectoria balística de los torpedos y arrastran el submarino si no se compensa el timón.
+- **Derrumbes Sísmicos:** Colapso de cavernas y caída de monolitos de piedra detectables previamente por el Defensor.
+
+### 3.3 Fauna Marina Hostil (Creeps Neutrales con Buffs)
+- **Coloso Abisal (Calamar Gigante / Monstruo de Fosa):** Ataca a submarinos que usen sonar activo o velocidad de flanco. Derrotarlo otorga el buff *Tinta Abisal* (invisibilidad al radar por 20 seg) o regeneración de casco.
+- **Cardúmenes de Anguilas Electromagnéticas:** Derrotarlas otorga *Batería Sobrecargada* (-30% tiempos de enfriamiento).
+
+### 3.4 Suministros Tácticos (Orbes y Cofres)
+- Aparecen un máximo de 3 veces por partida en zonas neutrales disputadas.
+- Tienen un tiempo de apertura de 4 segundos a velocidad cero o lenta.
+- **Tipos de drops:**
+  - *Orbe de Reparación Estructural:* Repara brechas críticas e inunda tanques de aire.
+  - *Orbe de Resonancia:* Resetea de inmediato todos los cooldowns de armas y contramedidas.
+  - *Orbe de Sobrecarga:* Recarga al 100% la habilidad definitiva del submarino.
+
+---
+
+## 4. Modos de Juego
+
+### 4.1 Modos PvP (Arenas Competitivas)
+- **Duelo a Muerte por Equipos (3v3 Subs):** 18 jugadores. Formato al mejor de 3 rondas o vidas compartidas por escuadrón.
+- **Rey del Foso (King of the Trench):** Zona de control esférica submarina que se reubica aleatoriamente en distintas cotas de profundidad cada 90 segundos.
+- **Captura del Núcleo Abisal:** Infiltración en base rival para remolcar un reactor magnético penalizando la velocidad de la nave portadora.
+
+### 4.2 Modo PvE Cooperativo (Loop de Progresión estilo Warframe)
+- **Star Chart Submarino:** Mapa de sectores oceánicos con nodos de misiones interconectadas.
+- **Tipos de Misión:**
+  - *Supervivencia:* Mantener la energía del reactor recogiendo cápsulas de oxígeno de patrullas enemigas.
+  - *Defensa Móvil:* Escolta y protección de sondas mineras automáticas.
+  - *Sabotaje:* Infiltración en complejos industriales sumergidos, sobrecarga de reactores y extracción contrarreloj.
+  - *Asesinato:* Cacería de Leviatanes biomecánicos o Súper-Submarinos nodriza con mecánicas de fases y puntos débiles.
+- **Cápsulas de Carga Perdidas (Reliquias del Vacío):**
+  - Obtenidas en misiones regulares.
+  - Se abren en misiones de Fisuras Abisales.
+  - Al extraer, la tripulación puede elegir entre las recompensas obtenidas por cualquiera de los 3 miembros, facilitando la obtención de planos de Submarinos Élite / Primigenios.
+
+---
+
+## 5. Sistema de Progresión y Crafteo (Astillero y Microchips)
+
+### 5.1 El Astillero (Foundry)
+Para construir un nuevo submarino se requiere recolectar y ensamblar:
+- Plano General del Casco (Blueprint)
+- Componente de Casco (*Hull*): Titanio Marino y Compuestos Cerámicos.
+- Componente de Propulsión (*Engine*): Turbinas de Inducción y Polímeros.
+- Componente de Sensores (*Avionics*): Cristales de Cuarzo y Cableado superconductor.
+- Componente de Reactor (*Power Core*): Células de Fisión / Núcleos Abisales.
+
+### 5.2 Sistema de Microchips (Mods)
+- **Capacidad de Energía Base** (ej. 30 pts / 60 pts con Reactor de Resonancia instalado).
+- **Sistema de Polaridades:** Ranuras con símbolos; colocar un chip que coincida con la polaridad divide a la mitad su costo de energía.
+- **Daño Elemental Combinado:**
+  - *Térmico:* Genera recalentamiento continuo de sistemas.
+  - *Criogénico:* Congela timones y reduce velocidad de giro.
+  - *Corrosivo:* Disuelve el blindaje metálico reduciendo la mitigación de daño.
+  - *Magnético / PEM:* Drena reservas de energía y distorsiona el radar del Defensor rival.
+
+---
+
+## 6. Arquitectura Técnica de Red (Mobile APK)
+
+```
+              [SERVIDOR DEDICADO / AUTORITATIVO]
+                 Simula: Física rígida del casco, proyectiles,
+                 entorno, colisiones, eventos dinámicos.
+                               ▲
+       ┌───────────────────────┼───────────────────────┐
+       │ RPCs / Inputs         │ Snapshot Sync         │ RPCs / Inputs
+       ▼                       ▼                       ▼
+[CLIENTE 1]               [CLIENTE 2]             [CLIENTE 3]
+ Navegante                 Artillero                Defensa
+(Predicción local de      (Interpolación suave     (Radar perimetral,
+    movimiento)             de periscopio)           minijuegos UI)
+```
+
+### 6.1 Sincronización de Tripulación (Pawn Multi-Ocupante)
+- **Entidad Única en Servidor:** El submarino existe como un solo actor físico rígido en el servidor.
+- **Jerarquía de Clientes:**
+  - El Navegante tiene autoridad de simulación predictiva local para eliminar sensación de lag al girar o acelerar.
+  - El Artillero y el Defensor reciben transformadas interpoladas del casco para evitar vibraciones o saltos en la cámara de puntería.
+- **Manejo de Desconexiones Móviles (Pérdida de señal 4G/5G):**
+  - Si un jugador se desconecta, entra una IA de transición que mantiene el rol en modo automático básico (ej. el artillero dispara a objetivos fijados; la defensa activa contramedidas con 70% de efectividad) hasta la reconexión del jugador humano.
+
+---
+
+## 7. Roadmap de Fases de Desarrollo
+
+- **Fase 1 (Prototipo Físico y Red LAN):**
+  - Casco 3D navegable con 6DoF y selector de marchas.
+  - Sincronización de 3 clientes en un único submarino con roles diferenciados.
+- **Fase 2 (Sistemas de Combate):**
+  - Balística de torpedos, retícula de predicción asistida y radares 360°.
+  - Implementación de contramedidas y minijuegos de reparación para Defensa.
+- **Fase 3 (Alpha PvP 3v3):**
+  - Primer mapa de pruebas con 6 submarinos (18 conexiones simultáneas).
+  - Modo Duelo a Muerte y Rey del Foso funcional.
+- **Fase 4 (Entorno Dinámico y Mapas):**
+  - Cuevas, corales destructibles, eventos de volcán/tsunami y creeps neutrales.
+- **Fase 5 (PvE, Astillero y Progresión):**
+  - Base de datos de inventario, sistema de planos, crafteo con tiempos de espera y sistema de microchips (mods).
