@@ -1,0 +1,32 @@
+[gd_scene]
+load_steps=2
+format=3
+uid=uid://fake_uid_crew_lobby_screen
+
+[ext_resource type="Texture2D" uid="uid://tex_crew_lobby_screen" path="res://assets/ui/crew_lobby_screen.svg" id="1_crew_lobby_screen"]
+
+[ext_resource type="Script" path="res://scenes/menus/generic_menu_script.gd" id="2_generic_menu"]
+
+[node name="MenuNode" type="Control" script=ExtResource("2_generic_menu")]
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode=1
+anchors_preset=15
+anchor_right=1.0
+anchor_bottom=1.0
+grow_horizontal=2
+grow_vertical=2
+texture=ExtResource("1_crew_lobby_screen")
+expand_mode=1
+stretch_mode=5
+
+[node name="NavButtons" type="HBoxContainer" parent="."]
+layout_mode=1
+anchors_preset=12
+anchor_top=1.0
+anchor_right=1.0
+anchor_bottom=1.0
+offset_top=-60.0
+grow_horizontal=2
+grow_vertical=0
+alignment=1

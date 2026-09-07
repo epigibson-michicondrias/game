@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+    <rect width="1280" height="720" fill="#0f172a" />
+    <text x="100" y="100" font-family="monospace" font-size="48" fill="#00f3ff">CODEX &amp; INVENTORY</text>
+    <line x1="100" y1="120" x2="1180" y2="120" stroke="#00f3ff" stroke-width="2" opacity="0.5" />
+
+    <!-- Data log entries -->
+    <rect x="100" y="160" width="1080" height="60" fill="#00f3ff" opacity="0.1" />
+    <text x="120" y="195" font-family="monospace" font-size="20" fill="#ffffff">LOG 001: The Abyssal Trench Discovery</text>
+    <text x="1150" y="195" font-family="monospace" font-size="20" fill="#00f3ff" text-anchor="end">UNLOCKED</text>
+
+    <rect x="100" y="240" width="1080" height="60" fill="none" stroke="#00f3ff" stroke-width="1" opacity="0.3" />
+    <text x="120" y="275" font-family="monospace" font-size="20" fill="#555555">LOG 002: ???</text>
+    <text x="1150" y="275" font-family="monospace" font-size="20" fill="#ff0055" text-anchor="end">LOCKED</text>
+
+    <rect x="100" y="320" width="1080" height="60" fill="#00f3ff" opacity="0.1" />
+    <text x="120" y="355" font-family="monospace" font-size="20" fill="#ffffff">LOG 003: Leviathan Sighting</text>
+    <text x="1150" y="355" font-family="monospace" font-size="20" fill="#00f3ff" text-anchor="end">UNLOCKED</text>
+</svg>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+    <rect width="1280" height="720" fill="#0f172a" />
+    <text x="100" y="100" font-family="monospace" font-size="48" fill="#00ffaa">CREW LOBBY (CO-OP)</text>
+    <rect x="100" y="150" width="300" height="400" fill="none" stroke="#00ffaa" stroke-width="2" />
+    <rect x="450" y="150" width="300" height="400" fill="none" stroke="#00ffaa" stroke-width="2" />
+    <rect x="800" y="150" width="300" height="400" fill="none" stroke="#00ffaa" stroke-width="2" opacity="0.3" />
+
+    <!-- Player 1 -->
+    <circle cx="250" cy="250" r="50" fill="#00ffaa" opacity="0.2" />
+    <text x="250" y="340" font-family="monospace" font-size="24" fill="#ffffff" text-anchor="middle">PLAYER 1</text>
+    <text x="250" y="370" font-family="monospace" font-size="18" fill="#00ffaa" text-anchor="middle">[ CAPTAIN ]</text>
+
+    <!-- Player 2 -->
+    <circle cx="600" cy="250" r="50" fill="#00ffaa" opacity="0.2" />
+    <text x="600" y="340" font-family="monospace" font-size="24" fill="#ffffff" text-anchor="middle">PLAYER 2</text>
+    <text x="600" y="370" font-family="monospace" font-size="18" fill="#00ffaa" text-anchor="middle">[ GUNNER ]</text>
+
+    <!-- Slot 3 -->
+    <text x="950" y="340" font-family="monospace" font-size="24" fill="#555555" text-anchor="middle">WAITING...</text>
+</svg>

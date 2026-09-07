@@ -78,10 +78,12 @@ func _process(_delta: float) -> void:
 
 	if current_role == Role.DEFENSE and weapons_system and sub_controller:
 		var blip = get_node_or_null("MainContainer/RoleLayers/DefenseLayer/RadarContainer/BlipMarker")
+		var threat = get_node_or_null("MainContainer/RoleLayers/DefenseLayer/RadarContainer/ThreatVector")
 		var container = get_node_or_null("MainContainer/RoleLayers/DefenseLayer/RadarContainer")
 		if blip and container:
 			if weapons_system.target_node:
 				blip.visible = true
+				if threat: threat.visible = true
 				var target_pos = weapons_system.target_node.global_transform.origin
 				var sub_pos = sub_controller.global_transform.origin
 				var sub_basis = sub_controller.global_transform.basis
@@ -99,9 +101,15 @@ func _process(_delta: float) -> void:
 				var blip_x = center.x + local_x * scale_factor
 				var blip_y = center.y + local_z * scale_factor
 
-				blip.position = Vector2(blip_x, blip_y) - (blip.size / 2.0)
+				var final_pos = Vector2(blip_x, blip_y)
+				blip.position = final_pos - (blip.size / 2.0)
+
+				if threat:
+					threat.points[0] = center
+					threat.points[1] = final_pos
 			else:
 				blip.visible = false
+				if threat: threat.visible = false
 
 func _input(event: InputEvent) -> void:
 	if steering_touch_area and steering_touch_area.visible and current_role == Role.NAVIGATOR:

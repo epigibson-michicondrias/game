@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+    <rect width="1280" height="720" fill="#0f172a" />
+    <text x="640" y="120" font-family="monospace" font-size="56" fill="#ffaa00" text-anchor="middle">MISSION SUCCESS</text>
+    <line x1="200" y1="150" x2="1080" y2="150" stroke="#ffaa00" stroke-width="2" />
+
+    <text x="640" y="250" font-family="monospace" font-size="32" fill="#ffffff" text-anchor="middle">REWARDS ACQUIRED</text>
+
+    <rect x="300" y="300" width="200" height="200" fill="none" stroke="#00f3ff" stroke-width="2" />
+    <text x="400" y="400" font-family="monospace" font-size="48" fill="#00f3ff" text-anchor="middle">500</text>
+    <text x="400" y="440" font-family="monospace" font-size="16" fill="#00f3ff" text-anchor="middle">CREDITS</text>
+
+    <rect x="540" y="300" width="200" height="200" fill="none" stroke="#ffaa00" stroke-width="2" />
+    <text x="640" y="400" font-family="monospace" font-size="48" fill="#ffaa00" text-anchor="middle">12</text>
+    <text x="640" y="440" font-family="monospace" font-size="16" fill="#ffaa00" text-anchor="middle">TITANIUM</text>
+
+    <rect x="780" y="300" width="200" height="200" fill="none" stroke="#ff0055" stroke-width="2" />
+    <text x="880" y="400" font-family="monospace" font-size="48" fill="#ff0055" text-anchor="middle">1</text>
+    <text x="880" y="440" font-family="monospace" font-size="16" fill="#ff0055" text-anchor="middle">RELIC</text>
+</svg>

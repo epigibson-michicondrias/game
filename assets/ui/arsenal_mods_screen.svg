@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+    <rect width="1280" height="720" fill="#0f172a" />
+    <text x="100" y="100" font-family="monospace" font-size="48" fill="#00f3ff">ARSENAL &amp; MODS</text>
+    <!-- Submarine wireframe -->
+    <ellipse cx="640" cy="360" rx="300" ry="80" fill="none" stroke="#00f3ff" stroke-width="3" opacity="0.6" />
+    <path d="M 340 360 L 250 320 L 250 400 Z" fill="none" stroke="#00f3ff" stroke-width="3" opacity="0.6" />
+    <!-- Mod Slots -->
+    <rect x="540" y="200" width="200" height="60" fill="none" stroke="#ffaa00" stroke-width="2" />
+    <text x="640" y="235" font-family="monospace" font-size="20" fill="#ffaa00" text-anchor="middle">HULL MOD</text>
+    <line x1="640" y1="260" x2="640" y2="280" stroke="#ffaa00" stroke-width="2" />
+
+    <rect x="300" y="500" width="200" height="60" fill="none" stroke="#00ffaa" stroke-width="2" />
+    <text x="400" y="535" font-family="monospace" font-size="20" fill="#00ffaa" text-anchor="middle">ENGINE MOD</text>
+    <line x1="400" y1="500" x2="400" y2="420" stroke="#00ffaa" stroke-width="2" />
+</svg>
