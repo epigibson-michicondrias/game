@@ -76,6 +76,9 @@ func _process(_delta: float) -> void:
 	if current_role == Role.GUNNER:
 		_process_gunner_targeting()
 
+	if Input.is_action_just_pressed("ui_accept") or Input.is_key_pressed(KEY_SPACE):
+		_on_fire_trigger_pressed()
+
 func _input(event: InputEvent) -> void:
 	if steering_touch_area and steering_touch_area.visible and current_role == Role.NAVIGATOR:
 		if event is InputEventMouseButton:

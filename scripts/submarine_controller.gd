@@ -49,6 +49,12 @@ var local_velocity: Vector3 = Vector3.ZERO
 var angular_velocity: Vector3 = Vector3.ZERO
 
 func _physics_process(delta: float) -> void:
+	if Input.is_key_pressed(KEY_1): set_gear(Gear.STOP)
+	if Input.is_key_pressed(KEY_2): set_gear(Gear.SLOW)
+	if Input.is_key_pressed(KEY_3): set_gear(Gear.CRUISE)
+	if Input.is_key_pressed(KEY_4): set_gear(Gear.FLANK)
+	if Input.is_key_pressed(KEY_5): set_gear(Gear.SILENT)
+
 	_update_timers(delta)
 	_process_hydrodynamics(delta)
 	_update_decibels()
@@ -112,6 +118,21 @@ func execute_emergency_reverse() -> void:
 	local_velocity.z = max_speed * 0.5
 
 func _process_hydrodynamics(delta: float) -> void:
+	var k_yaw: float = Input.get_axis("ui_right", "ui_left")
+	var k_pitch: float = Input.get_axis("ui_up", "ui_down")
+	if k_yaw != 0.0: input_yaw = k_yaw
+	if k_pitch != 0.0: input_pitch = k_pitch
+	if not Input.is_key_pressed(KEY_W) and not Input.is_key_pressed(KEY_S) and not Input.is_key_pressed(KEY_A) and not Input.is_key_pressed(KEY_D) and not Input.is_key_pressed(KEY_UP) and not Input.is_key_pressed(KEY_DOWN) and not Input.is_key_pressed(KEY_LEFT) and not Input.is_key_pressed(KEY_RIGHT):
+		input_yaw = move_toward(input_yaw, 0.0, delta * 2.0)
+		input_pitch = move_toward(input_pitch, 0.0, delta * 2.0)
+
+	var k_heave: float = 0.0
+	if Input.is_key_pressed(KEY_E): k_heave += 1.0
+	if Input.is_key_pressed(KEY_Q): k_heave -= 1.0
+	if k_heave != 0.0: input_heave = k_heave
+	if not Input.is_key_pressed(KEY_E) and not Input.is_key_pressed(KEY_Q):
+		input_heave = move_toward(input_heave, 0.0, delta * 2.0)
+
 	# Calculate depth
 	current_depth = max(0.0, -global_transform.origin.y + 100.0)
 

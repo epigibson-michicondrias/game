@@ -22,6 +22,11 @@ ambient_light_energy = 1.2
 fog_enabled = true
 fog_light_color = Color(0.02, 0.1, 0.18, 1)
 fog_density = 0.012
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.05
+glow_enabled = true
+glow_intensity = 0.5
+ssao_enabled = true
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_seabed"]
 noise_type = 3
@@ -80,6 +85,7 @@ environment = SubResource("Environment_underwater")
 transform = Transform3D(0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, -0.75, 0.433013, 0, 100, 0)
 light_color = Color(0.3, 0.75, 0.95, 1)
 light_energy = 1.0
+shadow_enabled = true
 
 [node name="OceanFloor" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, 0)
