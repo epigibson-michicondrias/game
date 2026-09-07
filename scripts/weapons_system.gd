@@ -79,6 +79,7 @@ func _spawn_torpedo_projectile(slot_index: int) -> void:
 
 	var torpedo_instance = torpedo_scene.instantiate() as Torpedo
 	if torpedo_instance:
+		torpedo_instance.launcher_node = get_parent() as Node3D
 		torpedo_instance.speed = weapon_speeds[slot_index]
 		torpedo_instance.damage = weapon_damages[slot_index]
 		torpedo_instance.target_node = target_node
