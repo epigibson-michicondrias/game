@@ -14,6 +14,21 @@ var current_role: Role = Role.NAVIGATOR
 @onready var gunner_layer: Control = $MainContainer/RoleLayers/GunnerLayer
 @onready var defense_layer: Control = $MainContainer/RoleLayers/DefenseLayer
 
+# Top Bar & Menu Controls
+@onready var btn_menu: Button = $MainContainer/TopBar/TabContainer/BtnMenu
+@onready var btn_hangar: Button = $MainContainer/TopBar/TabContainer/BtnHangar
+@onready var main_menu_overlay: Control = $MainContainer/MainMenuOverlay
+@onready var hangar_overlay: Control = $MainContainer/HangarOverlay
+
+@onready var btn_play_pvp: Button = $MainContainer/MainMenuOverlay/MenuContainer/BtnPlayPVP
+@onready var btn_star_chart: Button = $MainContainer/MainMenuOverlay/MenuContainer/BtnStarChart
+@onready var btn_hangar_menu: Button = $MainContainer/MainMenuOverlay/MenuContainer/BtnHangarMenu
+@onready var btn_resume_game: Button = $MainContainer/MainMenuOverlay/MenuContainer/BtnResumeGame
+@onready var btn_deploy_from_hangar: Button = $MainContainer/HangarOverlay/BtnDeployFromHangar
+
+# Steering Drag Area
+@onready var steering_touch_area: Panel = $MainContainer/RoleLayers/NavigatorLayer/SteeringTouchArea
+
 # Role Tabs
 @onready var btn_role_nav: Button = $MainContainer/TopBar/TabContainer/BtnNavigator
 @onready var btn_role_gun: Button = $MainContainer/TopBar/TabContainer/BtnGunner
@@ -49,6 +64,8 @@ var current_role: Role = Role.NAVIGATOR
 @onready var minigame_progress_bar: ProgressBar = $MainContainer/RoleLayers/DefenseLayer/RepairPanel/MinigameProgress
 
 var selected_weapon_slot: int = 0
+var is_touch_steering: bool = false
+var touch_start_pos: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_connect_ui_signals()
@@ -59,7 +76,39 @@ func _process(_delta: float) -> void:
 	if current_role == Role.GUNNER:
 		_process_gunner_targeting()
 
+func _input(event: InputEvent) -> void:
+	if steering_touch_area and steering_touch_area.visible and current_role == Role.NAVIGATOR:
+		if event is InputEventMouseButton:
+			var mb = event as InputEventMouseButton
+			if mb.button_index == MOUSE_BUTTON_LEFT:
+				var touch_rect = steering_touch_area.get_global_rect()
+				if touch_rect.has_point(mb.position):
+					is_touch_steering = mb.pressed
+					touch_start_pos = mb.position
+				else:
+					if not mb.pressed:
+						is_touch_steering = false
+						if sub_controller:
+							sub_controller.input_yaw = 0.0
+							sub_controller.input_pitch = 0.0
+
+		elif event is InputEventMouseMotion and is_touch_steering:
+			var mm = event as InputEventMouseMotion
+			var delta_pos = mm.position - touch_start_pos
+			if sub_controller:
+				sub_controller.input_yaw = clamp(delta_pos.x / 50.0, -1.0, 1.0)
+				sub_controller.input_pitch = clamp(-delta_pos.y / 50.0, -1.0, 1.0)
+
 func _connect_ui_signals() -> void:
+	# Menu & Overlay Signals
+	if btn_menu: btn_menu.pressed.connect(_toggle_main_menu)
+	if btn_hangar: btn_hangar.pressed.connect(_toggle_hangar)
+	if btn_play_pvp: btn_play_pvp.pressed.connect(_on_resume_deployment)
+	if btn_star_chart: btn_star_chart.pressed.connect(_on_resume_deployment)
+	if btn_hangar_menu: btn_hangar_menu.pressed.connect(_toggle_hangar)
+	if btn_resume_game: btn_resume_game.pressed.connect(_on_resume_deployment)
+	if btn_deploy_from_hangar: btn_deploy_from_hangar.pressed.connect(_on_resume_deployment)
+
 	# Role Tab Signals
 	if btn_role_nav: btn_role_nav.pressed.connect(func(): _switch_role(Role.NAVIGATOR))
 	if btn_role_gun: btn_role_gun.pressed.connect(func(): _switch_role(Role.GUNNER))
@@ -100,6 +149,20 @@ func _connect_system_signals() -> void:
 	if defense_system:
 		defense_system.incoming_threat_detected.connect(_on_incoming_threat)
 		defense_system.repair_progress_updated.connect(_on_repair_progress)
+
+func _toggle_main_menu() -> void:
+	if main_menu_overlay:
+		main_menu_overlay.visible = not main_menu_overlay.visible
+		if hangar_overlay: hangar_overlay.visible = false
+
+func _toggle_hangar() -> void:
+	if hangar_overlay:
+		hangar_overlay.visible = not hangar_overlay.visible
+		if main_menu_overlay: main_menu_overlay.visible = false
+
+func _on_resume_deployment() -> void:
+	if main_menu_overlay: main_menu_overlay.visible = false
+	if hangar_overlay: hangar_overlay.visible = false
 
 func _switch_role(role: Role) -> void:
 	current_role = role
@@ -186,7 +249,7 @@ func _process_gunner_targeting() -> void:
 		if crosshair_lbl:
 			crosshair_lbl.text = "+ [ SEARCHING ] +"
 
-func _on_target_lead_calculated(lead_pos: Vector3, is_stabilized: bool) -> void:
+func _on_target_lead_calculated(lead_pos: Vector3, _is_stabilized: bool) -> void:
 	if sub_controller == null or lead_reticle == null:
 		return
 

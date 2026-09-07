@@ -8,6 +8,7 @@ signal exploded(position: Vector3)
 @export var lifetime: float = 10.0
 @export var homing_strength: float = 0.5
 
+var launcher_node: Node3D = null
 var target_node: Node3D = null
 var velocity: Vector3 = Vector3.ZERO
 var lifetime_timer: float = 0.0
@@ -33,13 +34,15 @@ func _process(delta: float) -> void:
 	global_transform.origin += velocity * delta
 
 func _on_body_entered(body: Node3D) -> void:
-	if body == owner or body is SubmarineController:
+	if body == launcher_node or body == owner:
 		return
 	if body.has_method("take_damage"):
 		body.take_damage(damage)
 	_explode()
 
 func _on_area_entered(area: Area3D) -> void:
+	if area.owner == launcher_node or area == launcher_node:
+		return
 	if area.has_method("take_damage"):
 		area.take_damage(damage)
 		_explode()

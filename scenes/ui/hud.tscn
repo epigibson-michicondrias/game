@@ -29,6 +29,14 @@ grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
 
+[node name="BtnMenu" type="Button" parent="MainContainer/TopBar/TabContainer"]
+layout_mode = 2
+text = " [ MENU ] "
+
+[node name="BtnHangar" type="Button" parent="MainContainer/TopBar/TabContainer"]
+layout_mode = 2
+text = " [ HANGAR ] "
+
 [node name="BtnNavigator" type="Button" parent="MainContainer/TopBar/TabContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -97,12 +105,21 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -100.0
+offset_left = -220.0
 offset_top = 20.0
-offset_right = -20.0
+offset_right = -180.0
 offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 2
+
+[node name="LblDepthHeader" type="Label" parent="MainContainer/RoleLayers/NavigatorLayer/DepthSliderContainer"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = -25.0
+grow_horizontal = 2
+text = "BALLAST"
+horizontal_alignment = 1
 
 [node name="DepthSlider" type="VSlider" parent="MainContainer/RoleLayers/NavigatorLayer/DepthSliderContainer"]
 layout_mode = 1
@@ -112,6 +129,37 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 value = 50.0
+
+[node name="SteeringTouchArea" type="Panel" parent="MainContainer/RoleLayers/NavigatorLayer"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -160.0
+offset_top = -180.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="LblJoystick" type="Label" parent="MainContainer/RoleLayers/NavigatorLayer/SteeringTouchArea"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = -20.0
+offset_right = 60.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "TOUCH DRAG
+[ STEERING ]"
+horizontal_alignment = 1
 
 [node name="TelemetryContainer" type="VBoxContainer" parent="MainContainer/RoleLayers/NavigatorLayer"]
 layout_mode = 1
@@ -354,3 +402,148 @@ text = "RESET BREAKER"
 
 [node name="MinigameProgress" type="ProgressBar" parent="MainContainer/RoleLayers/DefenseLayer/RepairPanel"]
 layout_mode = 2
+
+[node name="MainMenuOverlay" type="Panel" parent="MainContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="MainContainer/MainMenuOverlay"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 40.0
+offset_right = 200.0
+offset_bottom = 100.0
+grow_horizontal = 2
+text = "S U B A B Y S S"
+horizontal_alignment = 1
+
+[node name="MenuContainer" type="VBoxContainer" parent="MainContainer/MainMenuOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -180.0
+offset_top = -100.0
+offset_right = 180.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BtnPlayPVP" type="Button" parent="MainContainer/MainMenuOverlay/MenuContainer"]
+layout_mode = 2
+text = "COMBAT ARENA (3v3 PvP)"
+
+[node name="BtnStarChart" type="Button" parent="MainContainer/MainMenuOverlay/MenuContainer"]
+layout_mode = 2
+text = "STAR CHART (PvE Missions)"
+
+[node name="BtnHangarMenu" type="Button" parent="MainContainer/MainMenuOverlay/MenuContainer"]
+layout_mode = 2
+text = "SHIPYARD / HANGAR"
+
+[node name="BtnResumeGame" type="Button" parent="MainContainer/MainMenuOverlay/MenuContainer"]
+layout_mode = 2
+text = "RESUME DEPLOYMENT"
+
+[node name="HangarOverlay" type="Panel" parent="MainContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HangarTitle" type="Label" parent="MainContainer/HangarOverlay"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 20.0
+offset_bottom = 60.0
+grow_horizontal = 2
+text = "SHIPYARD & SUBFRAME HANGAR"
+horizontal_alignment = 1
+
+[node name="ComponentsContainer" type="VBoxContainer" parent="MainContainer/HangarOverlay"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 70.0
+offset_right = 300.0
+offset_bottom = -70.0
+grow_vertical = 2
+
+[node name="LblComponentsHeader" type="Label" parent="MainContainer/HangarOverlay/ComponentsContainer"]
+layout_mode = 2
+text = "CORE SUBFRAME MODULES"
+
+[node name="BtnHullMod" type="Button" parent="MainContainer/HangarOverlay/ComponentsContainer"]
+layout_mode = 2
+text = "HULL: Titan Pressure Alloy"
+
+[node name="BtnEngineMod" type="Button" parent="MainContainer/HangarOverlay/ComponentsContainer"]
+layout_mode = 2
+text = "ENGINE: Cavitation Reducer"
+
+[node name="BtnAvionicsMod" type="Button" parent="MainContainer/HangarOverlay/ComponentsContainer"]
+layout_mode = 2
+text = "AVIONICS: High-Res Sonar Array"
+
+[node name="BtnPowerCoreMod" type="Button" parent="MainContainer/HangarOverlay/ComponentsContainer"]
+layout_mode = 2
+text = "POWER CORE: Plasma Reactor"
+
+[node name="StatsContainer" type="VBoxContainer" parent="MainContainer/HangarOverlay"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = 70.0
+offset_right = -30.0
+offset_bottom = -70.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="LblStatsHeader" type="Label" parent="MainContainer/HangarOverlay/StatsContainer"]
+layout_mode = 2
+text = "SUBFRAME SPECS"
+
+[node name="LblArmorStat" type="Label" parent="MainContainer/HangarOverlay/StatsContainer"]
+layout_mode = 2
+text = "HULL INTEGRITY: 500 HP"
+
+[node name="LblSpeedStat" type="Label" parent="MainContainer/HangarOverlay/StatsContainer"]
+layout_mode = 2
+text = "MAX VELOCITY: 30 kts"
+
+[node name="LblStealthStat" type="Label" parent="MainContainer/HangarOverlay/StatsContainer"]
+layout_mode = 2
+text = "CRUISE NOISE: 45 dB"
+
+[node name="BtnDeployFromHangar" type="Button" parent="MainContainer/HangarOverlay"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -60.0
+offset_right = 150.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "DEPLOY TO ABYSSAL SECTOR"
