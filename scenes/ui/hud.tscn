@@ -1,6 +1,33 @@
 [gd_scene load_steps=2 format=3 uid="uid://csubabyss_hud_001"]
 
 [ext_resource type="Script" path="res://scripts/hud_controller.gd" id="1_hud_script"]
+[ext_resource type="Texture2D" uid="uid://b5t8d2radar" path="res://assets/ui/radar_sonar.svg" id="2_radar_tex"]
+[ext_resource type="Texture2D" uid="uid://c6u9e3periscope" path="res://assets/ui/gunner_periscope.svg" id="3_periscope_tex"]
+[ext_resource type="Texture2D" uid="uid://d7v0f4weapons" path="res://assets/ui/weapon_icons.svg" id="4_weapons_tex"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+bg_color = Color(0.02, 0.067, 0.11, 0.627)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0.9, 1, 0.5)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_weapon1"]
+atlas = ExtResource("4_weapons_tex")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_weapon2"]
+atlas = ExtResource("4_weapons_tex")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_weapon3"]
+atlas = ExtResource("4_weapons_tex")
+region = Rect2(200, 0, 100, 100)
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud_script")
@@ -81,22 +108,27 @@ grow_vertical = 2
 
 [node name="BtnStop" type="Button" parent="MainContainer/RoleLayers/NavigatorLayer/GearContainer"]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hud")
 text = "STOP (0%)"
 
 [node name="BtnSlow" type="Button" parent="MainContainer/RoleLayers/NavigatorLayer/GearContainer"]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hud")
 text = "SLOW (30%)"
 
 [node name="BtnCruise" type="Button" parent="MainContainer/RoleLayers/NavigatorLayer/GearContainer"]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hud")
 text = "CRUISE (65%)"
 
 [node name="BtnFlank" type="Button" parent="MainContainer/RoleLayers/NavigatorLayer/GearContainer"]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hud")
 text = "FLANK (100%)"
 
 [node name="BtnSilent" type="Button" parent="MainContainer/RoleLayers/NavigatorLayer/GearContainer"]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hud")
 text = "SILENT RUNNING"
 
 [node name="DepthSliderContainer" type="Control" parent="MainContainer/RoleLayers/NavigatorLayer"]
@@ -187,6 +219,11 @@ layout_mode = 2
 text = "NOISE: 0.0 dB"
 horizontal_alignment = 1
 
+[node name="NoiseProgressBar" type="ProgressBar" parent="MainContainer/RoleLayers/NavigatorLayer/TelemetryContainer"]
+layout_mode = 2
+max_value = 100.0
+value = 0.0
+
 [node name="GunnerLayer" type="Control" parent="MainContainer/RoleLayers"]
 visible = false
 layout_mode = 1
@@ -195,6 +232,22 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="PeriscopeTexture" type="TextureRect" parent="MainContainer/RoleLayers/GunnerLayer"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -300.0
+offset_right = 300.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_periscope_tex")
+mouse_filter = 2
 
 [node name="ReticleCenter" type="Control" parent="MainContainer/RoleLayers/GunnerLayer"]
 layout_mode = 1
@@ -265,14 +318,17 @@ grow_vertical = 2
 [node name="BtnWeapon1" type="Button" parent="MainContainer/RoleLayers/GunnerLayer/WeaponsContainer"]
 layout_mode = 2
 text = "1. HEAVY TORPEDO"
+icon = SubResource("AtlasTexture_weapon1")
 
 [node name="BtnWeapon2" type="Button" parent="MainContainer/RoleLayers/GunnerLayer/WeaponsContainer"]
 layout_mode = 2
 text = "2. SUPERCAVITATING ROCKET"
+icon = SubResource("AtlasTexture_weapon2")
 
 [node name="BtnWeapon3" type="Button" parent="MainContainer/RoleLayers/GunnerLayer/WeaponsContainer"]
 layout_mode = 2
 text = "3. EMP / MINES"
+icon = SubResource("AtlasTexture_weapon3")
 
 [node name="SkillsContainer" type="HBoxContainer" parent="MainContainer/RoleLayers/GunnerLayer"]
 layout_mode = 1
@@ -329,12 +385,33 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -180.0
-offset_right = 150.0
-offset_bottom = 120.0
+offset_left = -200.0
+offset_top = -200.0
+offset_right = 200.0
+offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="RadarTexture" type="TextureRect" parent="MainContainer/RoleLayers/DefenseLayer/RadarContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_radar_tex")
+
+[node name="BlipMarker" type="TextureRect" parent="MainContainer/RoleLayers/DefenseLayer/RadarContainer"]
+layout_mode = 0
+offset_right = 20.0
+offset_bottom = 20.0
+visible = false
+modulate = Color(1, 0, 0, 1)
+texture = ExtResource("2_radar_tex")
+expand_mode = 1
+stretch_mode = 5
+rect_pivot_offset = Vector2(10, 10)
 
 [node name="LblRadarTitle" type="Label" parent="MainContainer/RoleLayers/DefenseLayer/RadarContainer"]
 layout_mode = 1

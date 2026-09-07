@@ -4,6 +4,28 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud_scene"]
 [ext_resource type="Script" path="res://scripts/hydrothermal_vent.gd" id="3_vent_script"]
 [ext_resource type="PackedScene" path="res://scenes/entities/target_dummy.tscn" id="4_dummy_scene"]
+[ext_resource type="Shader" path="res://shaders/caustics.gdshader" id="5_caustics_shader"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_caustics1"]
+frequency = 0.05
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_caustics1"]
+seamless = true
+noise = SubResource("FastNoiseLite_caustics1")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_caustics2"]
+frequency = 0.08
+offset = Vector3(100, 100, 0)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_caustics2"]
+seamless = true
+noise = SubResource("FastNoiseLite_caustics2")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_caustics"]
+render_priority = 0
+shader = ExtResource("5_caustics_shader")
+shader_parameter/noise1 = SubResource("NoiseTexture2D_caustics1")
+shader_parameter/noise2 = SubResource("NoiseTexture2D_caustics2")
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ocean"]
 sky_top_color = Color(0.01, 0.05, 0.12, 1)
@@ -15,18 +37,26 @@ ground_horizon_color = Color(0.02, 0.12, 0.22, 1)
 sky_material = SubResource("ProceduralSkyMaterial_ocean")
 
 [sub_resource type="Environment" id="Environment_underwater"]
-background_mode = 2
+background_mode = 1
+background_color = Color(0.008, 0.043, 0.078, 1)
 sky = SubResource("Sky_ocean")
-ambient_light_color = Color(0.08, 0.22, 0.35, 1)
-ambient_light_energy = 1.2
+ambient_light_color = Color(0.012, 0.133, 0.2, 1)
+ambient_light_energy = 0.8
 fog_enabled = true
 fog_light_color = Color(0.02, 0.1, 0.18, 1)
 fog_density = 0.012
 volumetric_fog_enabled = true
-volumetric_fog_density = 0.05
+volumetric_fog_density = 0.035
+volumetric_fog_albedo = Color(0.02, 0.106, 0.173, 1)
+volumetric_fog_emission = Color(0.004, 0.035, 0.071, 1)
 glow_enabled = true
-glow_intensity = 0.5
+glow_intensity = 1.2
+glow_blend_mode = 1
+glow_bloom = 0.8
+glow_hdr_threshold = 0.8
 ssao_enabled = true
+tonemap_mode = 2
+tonemap_exposure = 1.1
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_seabed"]
 noise_type = 3
@@ -37,6 +67,7 @@ seamless = true
 noise = SubResource("FastNoiseLite_seabed")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sand"]
+next_pass = SubResource("ShaderMaterial_caustics")
 albedo_color = Color(0.08, 0.18, 0.24, 1)
 roughness = 0.8
 bump_scale = 0.5
@@ -56,6 +87,28 @@ height = 8.0
 radius = 8.0
 height = 20.0
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vent_smoke"]
+emission_shape = 1
+emission_sphere_radius = 2.0
+direction = Vector3(0, 1, 0)
+spread = 15.0
+initial_velocity_min = 4.0
+initial_velocity_max = 8.0
+gravity = Vector3(0, 2.0, 0)
+color = Color(0.8, 0.3, 0.1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vent_smoke"]
+transparency = 1
+albedo_color = Color(0.1, 0.05, 0.02, 0.8)
+emission_enabled = true
+emission = Color(0.8, 0.2, 0.0, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_vent_smoke"]
+material = SubResource("StandardMaterial3D_vent_smoke")
+radius = 1.0
+height = 2.0
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_marine_snow"]
 emission_shape = 3
 emission_box_extents = Vector3(100, 50, 100)
@@ -67,9 +120,10 @@ gravity = Vector3(0, -0.1, 0)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dust"]
 transparency = 1
-albedo_color = Color(0.6, 0.9, 1.0, 0.4)
+albedo_color = Color(0.6, 0.9, 1.0, 0.8)
 emission_enabled = true
-emission = Color(0.2, 0.6, 0.8, 1)
+emission = Color(0.2, 0.8, 1.0, 1)
+emission_energy_multiplier = 1.5
 
 [sub_resource type="SphereMesh" id="SphereMesh_dust_particle"]
 material = SubResource("StandardMaterial3D_dust")
@@ -82,7 +136,7 @@ height = 0.1
 environment = SubResource("Environment_underwater")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, -0.75, 0.433013, 0, 100, 0)
+transform = Transform3D(0.866025, 0, -0.5, -0.433013, 0.5, -0.75, 0.25, 0.866025, 0.433013, 0, 100, 0)
 light_color = Color(0.3, 0.75, 0.95, 1)
 light_energy = 1.0
 shadow_enabled = true
@@ -100,6 +154,13 @@ mesh = SubResource("CylinderMesh_vent")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HydrothermalVent"]
 shape = SubResource("CylinderShape3D_vent_hazard")
+
+[node name="SmokeParticles" type="GPUParticles3D" parent="HydrothermalVent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+amount = 100
+lifetime = 4.0
+process_material = SubResource("ParticleProcessMaterial_vent_smoke")
+draw_pass_1 = SubResource("SphereMesh_vent_smoke")
 
 [node name="MarineSnowParticles" type="GPUParticles3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
