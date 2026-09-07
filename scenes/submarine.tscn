@@ -3,18 +3,41 @@
 [ext_resource type="Script" path="res://scripts/submarine_controller.gd" id="1_sub_script"]
 [ext_resource type="Script" path="res://scripts/weapons_system.gd" id="2_weapons_script"]
 [ext_resource type="Script" path="res://scripts/defense_system.gd" id="3_defense_script"]
+[ext_resource type="Shader" path="res://shaders/caustics.gdshader" id="4_caustics_shader"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_caustics1"]
+frequency = 0.05
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_caustics1"]
+seamless = true
+noise = SubResource("FastNoiseLite_caustics1")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_caustics2"]
+frequency = 0.08
+offset = Vector3(100, 100, 0)
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_caustics2"]
+seamless = true
+noise = SubResource("FastNoiseLite_caustics2")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_caustics"]
+render_priority = 0
+shader = ExtResource("4_caustics_shader")
+shader_parameter/noise1 = SubResource("NoiseTexture2D_caustics1")
+shader_parameter/noise2 = SubResource("NoiseTexture2D_caustics2")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hull"]
 radius = 1.5
 height = 8.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_metal_hull"]
-albedo_color = Color(0.18, 0.28, 0.35, 1)
-metallic = 0.85
-roughness = 0.3
+next_pass = SubResource("ShaderMaterial_caustics")
+albedo_color = Color(0.102, 0.133, 0.157, 1)
+metallic = 0.75
+roughness = 0.35
 emission_enabled = true
-emission = Color(0.0, 0.4, 0.6, 1)
-emission_energy_multiplier = 0.2
+emission = Color(0.0, 0.94, 1.0, 1)
+emission_energy_multiplier = 2.0
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_hull"]
 material = SubResource("StandardMaterial3D_metal_hull")
@@ -81,6 +104,13 @@ amount = 50
 lifetime = 2.0
 process_material = SubResource("ParticleProcessMaterial_bubbles")
 draw_pass_1 = SubResource("SphereMesh_bubble")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.2)
+light_color = Color(0.8, 0.95, 1, 1)
+light_energy = 3.0
+spot_range = 50.0
+spot_angle = 35.0
 
 [node name="WeaponsSystem" type="Node3D" parent="."]
 script = ExtResource("2_weapons_script")

@@ -76,8 +76,32 @@ func _process(_delta: float) -> void:
 	if current_role == Role.GUNNER:
 		_process_gunner_targeting()
 
-	if Input.is_action_just_pressed("ui_accept") or Input.is_key_pressed(KEY_SPACE):
-		_on_fire_trigger_pressed()
+	if current_role == Role.DEFENSE and weapons_system and sub_controller:
+		var blip = get_node_or_null("MainContainer/RoleLayers/DefenseLayer/RadarContainer/BlipMarker")
+		var container = get_node_or_null("MainContainer/RoleLayers/DefenseLayer/RadarContainer")
+		if blip and container:
+			if weapons_system.target_node:
+				blip.visible = true
+				var target_pos = weapons_system.target_node.global_transform.origin
+				var sub_pos = sub_controller.global_transform.origin
+				var sub_basis = sub_controller.global_transform.basis
+
+				var diff = target_pos - sub_pos
+				# Project onto local XZ plane for 2D radar
+				var local_x = sub_basis.x.dot(diff)
+				var local_z = sub_basis.z.dot(diff) # Z is forward usually, but in Godot -Z is forward
+
+				# Radar UI coordinates: Center is size/2, X is right, Y is down
+				# Let's map max range of 500m to the radius of the radar (e.g. 200px)
+				var center = container.size / 2.0
+				var scale_factor = 200.0 / 500.0
+
+				var blip_x = center.x + local_x * scale_factor
+				var blip_y = center.y + local_z * scale_factor
+
+				blip.position = Vector2(blip_x, blip_y) - (blip.size / 2.0)
+			else:
+				blip.visible = false
 
 func _input(event: InputEvent) -> void:
 	if steering_touch_area and steering_touch_area.visible and current_role == Role.NAVIGATOR:
@@ -195,6 +219,10 @@ func _on_telemetry_updated(depth: float, speed: float, decibels: float) -> void:
 	if lbl_telemetry_speed: lbl_telemetry_speed.text = "SPEED: %.1f kts" % speed
 	if lbl_telemetry_decibels: lbl_telemetry_decibels.text = "NOISE: %.1f dB" % decibels
 
+	var noise_bar = get_node_or_null("MainContainer/RoleLayers/NavigatorLayer/TelemetryContainer/NoiseProgressBar")
+	if noise_bar:
+		noise_bar.value = decibels
+
 func _on_silent_running_status(active: bool, time_left: float) -> void:
 	if btn_gear_silent:
 		if active:
@@ -262,7 +290,7 @@ func _on_target_lead_calculated(lead_pos: Vector3, _is_stabilized: bool) -> void
 			lead_reticle.visible = false
 		else:
 			var screen_pos = camera.unproject_position(lead_pos)
-			lead_reticle.global_position = screen_pos
+			lead_reticle.global_position = screen_pos - (lead_reticle.size / 2.0)
 			lead_reticle.visible = true
 
 func _on_incoming_threat(threat_id: String, tti: float) -> void:

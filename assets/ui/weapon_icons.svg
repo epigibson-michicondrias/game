@@ -1,0 +1,31 @@
+<svg width="300" height="100" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Slot 1: Heavy Torpedo -->
+  <g transform="translate(10, 10)">
+    <rect x="0" y="0" width="80" height="80" rx="10" fill="none" stroke="#00e5ff" stroke-width="2"/>
+    <path d="M20 30 L60 30 C70 40 70 40 60 50 L20 50 Z" fill="#00e5ff"/>
+    <polygon points="20,30 15,25 15,55 20,50" fill="#00e5ff"/>
+    <rect x="10" y="35" width="5" height="10" fill="#00e5ff"/>
+  </g>
+
+  <!-- Slot 2: Supercavitating Torpedo -->
+  <g transform="translate(110, 10)">
+    <rect x="0" y="0" width="80" height="80" rx="10" fill="none" stroke="#00e5ff" stroke-width="2"/>
+    <polygon points="15,45 65,35 65,45" fill="#00e5ff"/>
+    <line x1="10" y1="30" x2="15" y2="55" stroke="#00e5ff" stroke-width="3"/>
+    <circle cx="67" cy="40" r="3" fill="#ffffff"/>
+  </g>
+
+  <!-- Slot 3: EMP Mine -->
+  <g transform="translate(210, 10)">
+    <rect x="0" y="0" width="80" height="80" rx="10" fill="none" stroke="#ffb300" stroke-width="2"/>
+    <circle cx="40" cy="40" r="15" fill="#ffb300"/>
+    <line x1="40" y1="15" x2="40" y2="25" stroke="#ffb300" stroke-width="3"/>
+    <line x1="40" y1="55" x2="40" y2="65" stroke="#ffb300" stroke-width="3"/>
+    <line x1="15" y1="40" x2="25" y2="40" stroke="#ffb300" stroke-width="3"/>
+    <line x1="55" y1="40" x2="65" y2="40" stroke="#ffb300" stroke-width="3"/>
+    <line x1="22" y1="22" x2="29" y2="29" stroke="#ffb300" stroke-width="3"/>
+    <line x1="58" y1="58" x2="51" y2="51" stroke="#ffb300" stroke-width="3"/>
+    <line x1="22" y1="58" x2="29" y2="51" stroke="#ffb300" stroke-width="3"/>
+    <line x1="58" y1="22" x2="51" y2="29" stroke="#ffb300" stroke-width="3"/>
+  </g>
+</svg>

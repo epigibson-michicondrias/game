@@ -1,0 +1,20 @@
+<svg width="600" height="600" viewBox="-300 -300 600 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Vignette/Outer ring -->
+  <rect x="-300" y="-300" width="600" height="600" fill="#000000" opacity="0.4"/>
+  <circle cx="0" cy="0" r="280" fill="none" stroke="#00e5ff" stroke-width="2" stroke-dasharray="2,6"/>
+  <!-- Crosshairs -->
+  <circle cx="0" cy="0" r="10" fill="none" stroke="#00e5ff" stroke-width="2"/>
+  <line x1="-150" y1="0" x2="-20" y2="0" stroke="#00e5ff" stroke-width="2"/>
+  <line x1="20" y1="0" x2="150" y2="0" stroke="#00e5ff" stroke-width="2"/>
+  <line x1="0" y1="-150" x2="0" y2="-20" stroke="#00e5ff" stroke-width="2"/>
+  <line x1="0" y1="20" x2="0" y2="150" stroke="#00e5ff" stroke-width="2"/>
+  <!-- Mil-dots -->
+  <circle cx="-100" cy="0" r="2" fill="#00e5ff"/>
+  <circle cx="-50" cy="0" r="2" fill="#00e5ff"/>
+  <circle cx="50" cy="0" r="2" fill="#00e5ff"/>
+  <circle cx="100" cy="0" r="2" fill="#00e5ff"/>
+  <circle cx="0" cy="-100" r="2" fill="#00e5ff"/>
+  <circle cx="0" cy="-50" r="2" fill="#00e5ff"/>
+  <circle cx="0" cy="50" r="2" fill="#00e5ff"/>
+  <circle cx="0" cy="100" r="2" fill="#00e5ff"/>
+</svg>
