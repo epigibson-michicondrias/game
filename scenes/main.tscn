@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://csubabyss_main_001"]
+[gd_scene load_steps=11 format=3 uid="uid://csubabyss_main_001"]
 
 [ext_resource type="PackedScene" path="res://scenes/submarine.tscn" id="1_submarine_scene"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud_scene"]
 [ext_resource type="Script" path="res://scripts/hydrothermal_vent.gd" id="3_vent_script"]
+[ext_resource type="PackedScene" path="res://scenes/entities/target_dummy.tscn" id="4_dummy_scene"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ocean"]
 sky_top_color = Color(0.02, 0.08, 0.18, 1)
@@ -57,6 +58,9 @@ mesh = SubResource("CylinderMesh_vent")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HydrothermalVent"]
 shape = SubResource("CylinderShape3D_vent_hazard")
+
+[node name="TargetDummy" parent="." instance=ExtResource("4_dummy_scene")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50)
 
 [node name="Submarine" parent="." instance=ExtResource("1_submarine_scene")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

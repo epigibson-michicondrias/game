@@ -37,6 +37,7 @@ var current_role: Role = Role.NAVIGATOR
 @onready var btn_skill_1: Button = $MainContainer/RoleLayers/GunnerLayer/SkillsContainer/BtnSkill1
 @onready var btn_skill_2: Button = $MainContainer/RoleLayers/GunnerLayer/SkillsContainer/BtnSkill2
 @onready var btn_fire_trigger: Button = $MainContainer/RoleLayers/GunnerLayer/BtnFireTrigger
+@onready var crosshair_lbl: Label = $MainContainer/RoleLayers/GunnerLayer/ReticleCenter/Crosshair
 @onready var lead_reticle: Control = $MainContainer/RoleLayers/GunnerLayer/ReticleCenter/LeadReticle
 
 # Defense UI Controls
@@ -53,6 +54,10 @@ func _ready() -> void:
 	_connect_ui_signals()
 	_connect_system_signals()
 	_switch_role(Role.NAVIGATOR)
+
+func _process(_delta: float) -> void:
+	if current_role == Role.GUNNER:
+		_process_gunner_targeting()
 
 func _connect_ui_signals() -> void:
 	# Role Tab Signals
@@ -86,9 +91,11 @@ func _connect_ui_signals() -> void:
 func _connect_system_signals() -> void:
 	if sub_controller:
 		sub_controller.telemetry_updated.connect(_on_telemetry_updated)
+		sub_controller.silent_running_status.connect(_on_silent_running_status)
 
 	if weapons_system:
 		weapons_system.weapon_cooldown_updated.connect(_on_weapon_cooldown_updated)
+		weapons_system.target_lead_calculated.connect(_on_target_lead_calculated)
 
 	if defense_system:
 		defense_system.incoming_threat_detected.connect(_on_incoming_threat)
@@ -101,7 +108,7 @@ func _switch_role(role: Role) -> void:
 	if gunner_layer: gunner_layer.visible = (role == Role.GUNNER)
 	if defense_layer: defense_layer.visible = (role == Role.DEFENSE)
 
-	# Switch Camera perspective on Submarine if applicable
+	# Switch Camera perspective on Submarine
 	if sub_controller:
 		var cam_chase = sub_controller.get_node_or_null("ChaseCamera") as Camera3D
 		var cam_periscope = sub_controller.get_node_or_null("PeriscopeCamera") as Camera3D
@@ -115,13 +122,24 @@ func _on_gear_button_pressed(gear: SubmarineController.Gear) -> void:
 
 func _on_depth_slider_changed(value: float) -> void:
 	if sub_controller:
-		# Map slider value (0-100) to negative heave ballast input
 		sub_controller.input_heave = (value - 50.0) / 50.0
 
 func _on_telemetry_updated(depth: float, speed: float, decibels: float) -> void:
 	if lbl_telemetry_depth: lbl_telemetry_depth.text = "DEPTH: %.1fm" % depth
 	if lbl_telemetry_speed: lbl_telemetry_speed.text = "SPEED: %.1f kts" % speed
 	if lbl_telemetry_decibels: lbl_telemetry_decibels.text = "NOISE: %.1f dB" % decibels
+
+func _on_silent_running_status(active: bool, time_left: float) -> void:
+	if btn_gear_silent:
+		if active:
+			btn_gear_silent.text = "SILENT (%.1fs)" % time_left
+			btn_gear_silent.disabled = false
+		elif time_left > 0.0:
+			btn_gear_silent.text = "COOLDOWN (%.1fs)" % time_left
+			btn_gear_silent.disabled = true
+		else:
+			btn_gear_silent.text = "SILENT RUNNING"
+			btn_gear_silent.disabled = false
 
 func _on_fire_trigger_pressed() -> void:
 	if weapons_system:
@@ -141,6 +159,45 @@ func _on_weapon_cooldown_updated(slot_index: int, time_left: float) -> void:
 		else:
 			btn.text = "WEAPON %d" % [slot_index + 1]
 			btn.disabled = false
+
+func _process_gunner_targeting() -> void:
+	if sub_controller == null:
+		return
+
+	var camera = sub_controller.get_node_or_null("PeriscopeCamera") as Camera3D
+	if camera == null or not camera.current:
+		return
+
+	# Perform camera raycast for target lock
+	var ray_origin = camera.global_transform.origin
+	var ray_dir = -camera.global_transform.basis.z
+
+	var space_state = camera.get_world_3d().direct_space_state
+	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_origin + ray_dir * 500.0)
+	query.exclude = [sub_controller.get_rid()]
+	var result = space_state.intersect_ray(query)
+
+	if result and result.get("collider") is TargetDummy:
+		if crosshair_lbl:
+			crosshair_lbl.text = "+ [ TARGET LOCKED ] +"
+		if weapons_system:
+			weapons_system.target_node = result["collider"] as Node3D
+	else:
+		if crosshair_lbl:
+			crosshair_lbl.text = "+ [ SEARCHING ] +"
+
+func _on_target_lead_calculated(lead_pos: Vector3, is_stabilized: bool) -> void:
+	if sub_controller == null or lead_reticle == null:
+		return
+
+	var camera = sub_controller.get_node_or_null("PeriscopeCamera") as Camera3D
+	if camera and camera.current:
+		if camera.is_position_behind(lead_pos):
+			lead_reticle.visible = false
+		else:
+			var screen_pos = camera.unproject_position(lead_pos)
+			lead_reticle.global_position = screen_pos
+			lead_reticle.visible = true
 
 func _on_incoming_threat(threat_id: String, tti: float) -> void:
 	if lbl_tti_counter:
@@ -168,6 +225,6 @@ func _on_circuit_breaker_pressed() -> void:
 			defense_system.start_repair_minigame(DefenseSystem.MinigameType.CIRCUIT_BREAKER)
 		defense_system.toggle_circuit_breaker(0)
 
-func _on_repair_progress(system_name: String, progress: float) -> void:
+func _on_repair_progress(_system_name: String, progress: float) -> void:
 	if minigame_progress_bar:
 		minigame_progress_bar.value = progress

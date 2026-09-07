@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://ctorpedo_001"]
+
+[ext_resource type="Script" path="res://scripts/torpedo.gd" id="1_torpedo_script"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_torpedo"]
+radius = 0.3
+height = 2.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_torpedo"]
+radius = 0.3
+height = 2.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_bubbles"]
+emission_shape = 1
+emission_sphere_radius = 0.2
+direction = Vector3(0, 0, 1)
+spread = 15.0
+initial_velocity_min = 2.0
+initial_velocity_max = 5.0
+gravity = Vector3(0, 1, 0)
+
+[node name="Torpedo" type="Area3D"]
+script = ExtResource("1_torpedo_script")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_torpedo")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_torpedo")
+
+[node name="BubbleWake" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+process_material = SubResource("ParticleProcessMaterial_bubbles")
