@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">
+    <rect width="1280" height="720" fill="#0f172a" />
+    <text x="100" y="100" font-family="monospace" font-size="48" fill="#ffaa00">FOUNDRY CRAFTING</text>
+    <rect x="100" y="150" width="400" height="500" fill="none" stroke="#ffaa00" stroke-width="2" />
+    <text x="300" y="200" font-family="monospace" font-size="24" fill="#ffaa00" text-anchor="middle">BLUEPRINTS</text>
+    <line x1="100" y1="220" x2="500" y2="220" stroke="#ffaa00" stroke-width="2" />
+    <text x="120" y="260" font-family="monospace" font-size="20" fill="#ffffff">Titanium Plating</text>
+    <text x="120" y="300" font-family="monospace" font-size="20" fill="#ffffff">EMP Warhead</text>
+    <text x="120" y="340" font-family="monospace" font-size="20" fill="#ffffff">Plasma Core</text>
+
+    <rect x="600" y="150" width="580" height="500" fill="none" stroke="#00f3ff" stroke-width="2" />
+    <text x="890" y="200" font-family="monospace" font-size="24" fill="#00f3ff" text-anchor="middle">CRAFTING DETAILS</text>
+    <line x1="600" y1="220" x2="1180" y2="220" stroke="#00f3ff" stroke-width="2" />
+    <circle cx="890" cy="400" r="100" fill="none" stroke="#00f3ff" stroke-width="5" stroke-dasharray="10 5" />
+    <text x="890" y="410" font-family="monospace" font-size="32" fill="#00f3ff" text-anchor="middle">45%</text>
+</svg>

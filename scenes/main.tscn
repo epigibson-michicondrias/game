@@ -179,3 +179,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 sub_controller = NodePath("../Submarine")
 weapons_system = NodePath("../Submarine/WeaponsSystem")
 defense_system = NodePath("../Submarine/DefenseSystem")
+
+[node name="ExtractionZone" parent="." instance=ExtResource("5_extract")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -100, -20, 100)

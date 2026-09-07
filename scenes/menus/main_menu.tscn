@@ -1,0 +1,49 @@
+[gd_scene]
+load_steps=2
+format=3
+uid=uid://fake_uid_main_menu_screen
+
+[ext_resource type="Texture2D" uid="uid://tex_main_menu_screen" path="res://assets/ui/main_menu_screen.svg" id="1_main_menu_screen"]
+
+[ext_resource type="Script" path="res://scenes/menus/main_menu_script.gd" id="2_main_menu"]
+
+[node name="MenuNode" type="Control" script=ExtResource("2_main_menu")]
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode=1
+anchors_preset=15
+anchor_right=1.0
+anchor_bottom=1.0
+grow_horizontal=2
+grow_vertical=2
+texture=ExtResource("1_main_menu_screen")
+expand_mode=1
+stretch_mode=5
+
+[node name="NavButtons" type="HBoxContainer" parent="."]
+layout_mode=1
+anchors_preset=12
+anchor_top=1.0
+anchor_right=1.0
+anchor_bottom=1.0
+offset_top=-60.0
+grow_horizontal=2
+grow_vertical=0
+alignment=1
+
+
+[node name="BtnPVP" type="Button" parent="NavButtons"]
+layout_mode = 2
+text = "BATALLA PVP"
+
+[node name="BtnPVE" type="Button" parent="NavButtons"]
+layout_mode = 2
+text = "OPERACIONES PVE"
+
+[node name="BtnArsenal" type="Button" parent="NavButtons"]
+layout_mode = 2
+text = "ARSENAL"
+
+[node name="BtnFoundry" type="Button" parent="NavButtons"]
+layout_mode = 2
+text = "FOUNDRY"

@@ -4,10 +4,14 @@
 
 config_version=5
 
+[autoload]
+
+MenuNavigation="*res://scripts/menu_navigation.gd"
+
 [application]
 
 config/name="SubAbyss"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/menus/main_menu.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 
 [display]
